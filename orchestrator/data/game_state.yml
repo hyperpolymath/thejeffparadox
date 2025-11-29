@@ -1,0 +1,22 @@
+# Game State - The Jeff Paradox
+# This file is updated by the engine after each turn
+
+# Core mechanics
+chaos: 15
+exposure: 5
+faction_slider: 0
+
+# Turn tracking
+turn_number: 0
+current_node: "alpha"
+
+# Anti-convergence state
+diversity_injection_counter: 0
+last_diversity_turn: 0
+
+# Pattern quarantine (populated during play)
+pattern_quarantine: []
+
+# Timestamps
+created_at: "2025-11-29T00:00:00Z"
+last_updated: "2025-11-29T00:00:00Z"

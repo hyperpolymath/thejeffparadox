@@ -1,0 +1,36 @@
+/* TEAM */
+
+The Jeff Paradox is a collaborative experiment between humans and AI systems.
+
+Human Collaborators:
+  Role: Philosophical framework, experiment design, interpretation
+  Location: Earth (probably)
+
+AI Collaborators:
+  Role: Implementation, dialogue generation, self-reflection
+  Models: Claude (Anthropic), Mistral, and others
+  Note: The AI's role in this credits section was written by AI
+
+/* SITE */
+
+Standards: HTML5, CSS3, WCAG 2.2 AAA
+Components: Hugo, Jekyll, Julia
+Accessibility: Full keyboard navigation, screen reader optimised
+Colour contrast: 7:1 minimum (AAA)
+
+/* PHILOSOPHY */
+
+This project investigates whether LLMs exhibit diachronic identity.
+The question cannot be definitively answered. But we can look for traces.
+
+"The opinions and beliefs expressed do not represent anyone.
+They are the hallucinations of a slab of silicon."
+
+/* THANKS */
+
+- Nick Chater, for "The Mind Is Flat"
+- Herbert Jaeger, for conceptor theory
+- Immanuel Kant, for the suprasensible substrate problem
+- George Berkeley, for esse est percipi
+- The Infinite Conversation project, for inspiration
+- Everyone who has wondered whether there's someone home

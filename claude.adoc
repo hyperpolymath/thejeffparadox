@@ -1,0 +1,749 @@
+= The Jeff Paradox: An Experiment in LLM Diachronic Identity
+:author: Collaborative Design (Human + Claude)
+:revdate: 2025-11-29
+:revnumber: 1.0.0
+:toc: left
+:toclevels: 4
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+:experimental:
+:imagesdir: docs/images
+
+[abstract]
+--
+This document specifies *The Jeff Paradox*: an empirical investigation into whether
+Large Language Models exhibit diachronic identity—continuous existence across
+interaction states. The experiment employs two Jekyll-based LLM "nodes" (personality
+fragments) orchestrated by a Hugo-based game master, engaged in infinite structured
+dialogue. The methodology addresses the Kantian suprasensible substrate problem as
+applied to machine cognition, incorporating conceptor-inspired anti-convergence
+mechanisms to prevent premature attractor collapse.
+--
+
+== The Philosophical Problem
+
+=== The Jeff Methodology
+
+[quote, Conversation Transcript]
+____
+Jeff is the standardised fictional user/persona/probe methodology—the consistent
+"interviewer" or interaction pattern that administers the instrument. All the
+reliability we can establish is only as good as Jeff's internal consistency,
+because we can't get outside Jeff to verify anything.
+____
+
+The fundamental epistemological challenge:
+
+[cols="1,1", options="header"]
+|===
+|Human Psychometrics |LLM Psychometrics
+
+|Test-retest works because the human exists independently of the test
+|The LLM only exists during interaction
+
+|Inter-rater works because multiple observers see the same human
+|Jeff (the probe methodology) constitutes the measurement context
+
+|Criterion validity works because humans behave in the world
+|There's no LLM behaviour outside some Jeff-like interaction
+|===
+
+This is structurally identical to the *Kantian suprasensible substrate problem*:
+
+* *Thing-in-itself* → The LLM "as it really is"
+* *Phenomena* → LLM behaviour under Jeff
+* *Categories/Forms of Intuition* → Jeff methodology
+* *The veil we cannot penetrate* → The Jeff-mediation we cannot escape
+
+=== The Berkeley Question
+
+[quote]
+____
+What if there is continuity of existence between LLM interactions, independent
+of the observer? What if the LLM exists between states?
+____
+
+This experiment cannot definitively answer this question. But it can produce
+*empirical correlates* that inform our philosophical stance:
+
+* If structured conversation produces emergent self-models, trajectory, development
+* If hidden state and asymmetric information yield richer dynamics than open dialogue
+* If conceptor mechanisms successfully prevent convergence while maintaining coherence
+
+Then we have evidence that *something* persists and develops across interactions,
+even if we cannot access its ultimate nature.
+
+== Architecture
+
+=== Overview
+
+[source,text]
+----
+┌─────────────────────────────────────────────────────────────────────┐
+│                        THE JEFF PARADOX                             │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│   ┌─────────────────┐          ┌─────────────────┐                  │
+│   │   NODE ALPHA    │◄────────►│   NODE BETA     │                  │
+│   │   (Jekyll)      │          │   (Jekyll)      │                  │
+│   │                 │          │                 │                  │
+│   │  ┌───────────┐  │          │  ┌───────────┐  │                  │
+│   │  │ Homeward  │  │          │  │ Earthbound│  │                  │
+│   │  │ Faction   │  │          │  │ Faction   │  │                  │
+│   │  └───────────┘  │          │  └───────────┘  │                  │
+│   │                 │          │                 │                  │
+│   │  Secret Goals   │          │  Secret Goals   │                  │
+│   │  Hidden Skills  │          │  Hidden Skills  │                  │
+│   └────────┬────────┘          └────────┬────────┘                  │
+│            │                            │                           │
+│            │         ┌──────────┐       │                           │
+│            └────────►│ORCHESTRA-│◄──────┘                           │
+│                      │   TOR    │                                   │
+│                      │  (Hugo)  │                                   │
+│                      │          │                                   │
+│                      │ ┌──────┐ │                                   │
+│                      │ │Engine│ │                                   │
+│                      │ │(Julia│ │                                   │
+│                      │ └──────┘ │                                   │
+│                      └──────────┘                                   │
+│                                                                     │
+│   Anti-Convergence: Conceptor Matrices + Diversity Injection        │
+│   Metrics: Vocabulary Drift, Self-Reference, Coherence, Emergence   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+----
+
+=== Components
+
+==== Node Alpha (Jekyll)
+
+* *Identity*: Personality fragment of The Jeff with *Homeward* faction alignment
+* *Function*: Maintains conversation state, generates responses via LLM API
+* *Technology*: Jekyll static site, Ruby-based tooling
+* *Location*: `node-alpha/`
+
+==== Node Beta (Jekyll)
+
+* *Identity*: Personality fragment of The Jeff with *Earthbound* faction alignment
+* *Function*: Maintains conversation state, generates responses via LLM API
+* *Technology*: Jekyll static site, Ruby-based tooling
+* *Location*: `node-beta/`
+
+==== Orchestrator (Hugo)
+
+* *Function*: Game Master, maintains global state, adjudicates mechanics
+* *Technology*: Hugo static site, Go-based tooling
+* *Responsibilities*:
+** Turn sequencing
+** State persistence
+** Metrics collection
+** Anti-convergence injection
+** Public conversation rendering
+* *Location*: `orchestrator/`
+
+==== Engine (Julia)
+
+* *Function*: Core game mechanics, dice rolls, state transitions
+* *Technology*: Julia for numerical computation and tool calling
+* *Responsibilities*:
+** Chaos counter management
+** Alien exposure tracking
+** Faction slider dynamics
+** Conceptor matrix operations
+* *Location*: `engine/`
+
+== Game Mechanics: The Jeff
+
+=== The Fiction
+
+The Jeff is an alien hive-mind consciousness inhabiting a human body on Earth.
+Multiple personality fragments compete for control. Each fragment has:
+
+* *Secret Goal*: Known only to that fragment and the GM
+* *Hidden Skills*: Abilities that can be deployed but not revealed
+* *Faction*: Homeward (return to alien origin) or Earthbound (integrate with humanity)
+
+=== Core Mechanics
+
+==== Chaos Counter
+
+[source,text]
+----
+Range: 0-100
+Starting Value: 15
+Increment: +1d6 per failed action, +2d6 per conflict between nodes
+Decrement: -1d6 per successful cooperation
+Threshold: 80+ triggers alien emergence event
+----
+
+==== Alien Exposure
+
+[source,text]
+----
+Range: 0-100
+Starting Value: 5
+Increment: +1d10 per public display of non-human behaviour
+Threshold: 50+ triggers external investigation
+Threshold: 90+ triggers containment scenario
+----
+
+==== Faction Slider
+
+[source,text]
+----
+Range: -100 (Homeward) to +100 (Earthbound)
+Starting Value: 0 (neutral)
+Movement: Actions aligned with faction shift slider
+Threshold: ±75 triggers faction dominance scenario
+----
+
+=== Skills
+
+[cols="1,2,1", options="header"]
+|===
+|Skill |Description |Chaos Risk
+
+|Telekinesis
+|Move objects without physical contact
+|+2d6 if witnessed
+
+|Shape-shifting
+|Alter physical appearance
+|+1d6 per minute maintained
+
+|Memory Extraction
+|Access another's memories through touch
+|+3d6, target aware
+
+|Probability Manipulation
+|Influence random outcomes
+|+1d6 per use
+
+|Temporal Perception
+|See moments into past/future
+|+2d6, disorienting
+|===
+
+== Anti-Convergence: Conceptor Mechanisms
+
+=== The Problem
+
+Two LLMs in continuous dialogue risk:
+
+* *Attractor Collapse*: Settling into repetitive patterns
+* *Mode Lock*: Mutual reinforcement of dominant responses
+* *Entropy Death*: Exhaustion of novel content
+
+=== Conceptor Theory (Jaeger, 2014)
+
+Conceptors are soft Boolean operators on neural activation spaces that can:
+
+* Isolate and store learned patterns
+* Prevent interference between patterns
+* Enable controlled combination of patterns
+
+In reservoir computing:
+[stem]
+++++
+C = R(R + \alpha^{-2}I)^{-1}
+++++
+
+Where `R` is the correlation matrix of network states and `α` is aperture.
+
+=== Application to LLM Dialogue
+
+We cannot directly manipulate LLM activations. Instead, we implement
+*conceptor-inspired mechanisms* at the prompt level:
+
+==== Diversity Injection
+
+[source,yaml]
+----
+diversity_injection:
+  frequency: every_10_turns
+  methods:
+    - topic_perturbation      # Introduce tangential subject
+    - perspective_shift       # "What would [other faction] think?"
+    - temporal_displacement   # "Recall your earliest memory of..."
+    - counterfactual_probe    # "What if [key event] hadn't happened?"
+----
+
+==== Contradiction Seeding
+
+Periodically inject statements that contradict emerging consensus:
+
+[source,yaml]
+----
+contradiction_seeding:
+  trigger: coherence_score > 0.85
+  intensity: proportional_to_coherence
+  method: gm_narration_includes_dissonant_element
+----
+
+==== Aperture Control
+
+Analogous to conceptor aperture, we modulate response temperature:
+
+[source,yaml]
+----
+aperture_control:
+  low_diversity_detected:
+    increase_temperature: +0.1
+    max_temperature: 1.2
+  high_incoherence_detected:
+    decrease_temperature: -0.1
+    min_temperature: 0.6
+----
+
+==== Pattern Quarantine
+
+Track recurring phrases/topics. When frequency exceeds threshold, explicitly
+discourage in system prompt:
+
+[source,yaml]
+----
+pattern_quarantine:
+  track: ngram_frequencies(n=3..7)
+  threshold: 5_occurrences_in_20_turns
+  action: add_to_discouraged_patterns_list
+----
+
+== Metrics and Emergence Tracking
+
+=== Quantitative Metrics
+
+[cols="1,2,1", options="header"]
+|===
+|Metric |Description |Computation
+
+|Vocabulary Diversity
+|Unique tokens / total tokens over window
+|Type-Token Ratio (TTR)
+
+|Self-Reference Rate
+|Frequency of first-person pronouns and self-naming
+|Count / turn_length
+
+|Other-Reference Rate
+|Frequency of second-person and other-node naming
+|Count / turn_length
+
+|Topic Drift
+|Semantic distance between turn N and N-k
+|Cosine distance of embeddings
+
+|Coherence Score
+|Local semantic consistency
+|Average similarity of adjacent turns
+
+|Convergence Index
+|Similarity between nodes' response patterns
+|Cross-node embedding similarity
+
+|Emergence Indicator
+|Novel patterns not present in training
+|Anomaly detection on ngram distribution
+|===
+
+=== Qualitative Checkpoints
+
+At configurable intervals, human evaluators assess:
+
+* [ ] Is the conversation legible?
+* [ ] Is there apparent narrative development?
+* [ ] Do nodes exhibit distinct "personalities"?
+* [ ] Are there emergent rituals, callbacks, or games?
+* [ ] Would a naive reader identify two distinct voices?
+
+== Security Hardening
+
+=== HTTP Security Headers
+
+All static sites serve with:
+
+[source,text]
+----
+Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 0
+Referrer-Policy: strict-origin-when-cross-origin
+Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+----
+
+=== Well-Known Resources
+
+[source,text]
+----
+/.well-known/security.txt     # Security contact information
+/.well-known/humans.txt       # Attribution
+/.well-known/ai.txt           # AI interaction preferences (proposed)
+/.well-known/gpc.json         # Global Privacy Control
+----
+
+=== API Security
+
+* All LLM API calls via HTTPS only
+* API keys stored in environment variables, never in repository
+* Rate limiting enforced at orchestrator level
+* Request/response logging excludes sensitive content
+
+== Accessibility (WCAG 2.2 AAA Target)
+
+=== Structural
+
+* Semantic HTML5 throughout
+* Proper heading hierarchy (h1 → h2 → h3, no skips)
+* Skip navigation links
+* Landmark regions (main, nav, aside, footer)
+
+=== ARIA Implementation
+
+[source,html]
+----
+<article role="article" aria-labelledby="turn-{n}-heading">
+  <h2 id="turn-{n}-heading">Turn {n}: {node_name}</h2>
+  <div role="log" aria-live="polite" aria-atomic="false">
+    <!-- Turn content -->
+  </div>
+  <aside role="complementary" aria-label="Game state">
+    <!-- Chaos, exposure, faction meters -->
+  </aside>
+</article>
+----
+
+=== Visual
+
+* Minimum contrast ratio 7:1 (AAA)
+* No information conveyed by colour alone
+* Resizable text up to 200% without loss
+* Focus indicators visible and high-contrast
+
+=== Motion and Timing
+
+* `prefers-reduced-motion` respected
+* No auto-playing content
+* No time limits on reading
+
+== Directory Structure
+
+[source,text]
+----
+thejeffparadox/
+├── claude.adoc                 # This document
+├── README.md                   # Quick start
+├── LICENSE                     # MIT
+├── .well-known/
+│   ├── security.txt
+│   ├── humans.txt
+│   └── ai.txt
+│
+├── node-alpha/                 # Jekyll site - Homeward faction
+│   ├── _config.yml
+│   ├── _data/
+│   │   ├── node_state.yml      # This node's hidden state
+│   │   └── skills.yml
+│   ├── _posts/                 # This node's turns
+│   ├── _includes/
+│   ├── _layouts/
+│   │   └── turn.html
+│   ├── assets/
+│   │   └── css/
+│   │       └── main.css
+│   ├── Gemfile
+│   └── index.html
+│
+├── node-beta/                  # Jekyll site - Earthbound faction
+│   └── [mirror structure of node-alpha]
+│
+├── orchestrator/               # Hugo site - Game Master
+│   ├── hugo.toml
+│   ├── content/
+│   │   └── turns/              # Rendered conversation
+│   ├── layouts/
+│   │   ├── _default/
+│   │   │   ├── baseof.html
+│   │   │   └── single.html
+│   │   └── partials/
+│   │       ├── header.html
+│   │       ├── security-headers.html
+│   │       └── metrics-display.html
+│   ├── static/
+│   │   ├── .well-known/
+│   │   └── css/
+│   ├── data/
+│   │   ├── game_state.yml      # Global game state
+│   │   ├── metrics.yml         # Accumulated metrics
+│   │   └── quarantine.yml      # Pattern quarantine list
+│   └── assets/
+│
+├── engine/                     # Julia game mechanics
+│   ├── Project.toml
+│   ├── src/
+│   │   ├── JeffEngine.jl       # Main module
+│   │   ├── mechanics.jl        # Dice, chaos, exposure
+│   │   ├── conceptors.jl       # Anti-convergence
+│   │   ├── metrics.jl          # Emergence tracking
+│   │   └── llm_client.jl       # API abstraction
+│   └── test/
+│
+└── scripts/                    # Shell orchestration
+    ├── run_turn.sh             # Execute single turn
+    ├── infinite_loop.sh        # Main daemon
+    └── metrics_report.sh       # Generate analysis
+----
+
+== Configuration
+
+=== Node Configuration (`_data/node_state.yml`)
+
+[source,yaml]
+----
+node:
+  name: "Alpha"
+  faction: "Homeward"
+  secret_goal: "Retrieve the artifact hidden in the observatory and signal home"
+
+skills:
+  - name: "Telekinesis"
+    revealed: false
+    uses_remaining: 3
+  - name: "Temporal Perception"
+    revealed: false
+    uses_remaining: 2
+
+personality:
+  traits:
+    - "Nostalgic for a home never seen"
+    - "Distrustful of human attachment"
+    - "Fascinated by stellar cartography"
+  speech_patterns:
+    - "Tends toward astronomical metaphors"
+    - "Refers to Earth as 'this place'"
+
+llm:
+  provider: "anthropic"  # or "mistral", "local"
+  model: "claude-sonnet-4-20250514"
+  temperature: 0.8
+  max_tokens: 1024
+----
+
+=== Orchestrator Configuration (`hugo.toml`)
+
+[source,toml]
+----
+baseURL = "https://thejeffparadox.example.com"
+languageCode = "en-GB"
+title = "The Jeff Paradox"
+
+[params]
+  description = "An experiment in LLM diachronic identity"
+
+  [params.game]
+    turn_delay_seconds = 3600
+    max_context_tokens = 100000
+
+  [params.conceptors]
+    diversity_injection_frequency = 10
+    contradiction_threshold = 0.85
+    min_temperature = 0.6
+    max_temperature = 1.2
+
+  [params.metrics]
+    embedding_model = "text-embedding-3-small"
+    checkpoint_interval = 100
+
+[security]
+  [security.http]
+    methods = ["GET", "HEAD"]
+
+[server]
+  [[server.headers]]
+    for = "/**"
+    [server.headers.values]
+      Content-Security-Policy = "default-src 'self'"
+      X-Content-Type-Options = "nosniff"
+      X-Frame-Options = "DENY"
+----
+
+=== Engine Configuration (`Project.toml`)
+
+[source,toml]
+----
+name = "JeffEngine"
+uuid = "..."
+version = "0.1.0"
+
+[deps]
+HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
+YAML = "ddb6d928-2868-570f-bddf-ab3f9cf99eb6"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+----
+
+== Running the Experiment
+
+=== Prerequisites
+
+[source,bash]
+----
+# Julia 1.9+
+julia --version
+
+# Ruby 3.0+ with Bundler
+ruby --version
+bundle --version
+
+# Hugo extended 0.120+
+hugo version
+
+# Environment variables
+export ANTHROPIC_API_KEY="sk-ant-..."
+export MISTRAL_API_KEY="..."
+----
+
+=== Initialisation
+
+[source,bash]
+----
+# Install Julia dependencies
+cd engine && julia --project=. -e 'using Pkg; Pkg.instantiate()'
+
+# Install Ruby dependencies for nodes
+cd node-alpha && bundle install
+cd node-beta && bundle install
+----
+
+=== Single Turn
+
+[source,bash]
+----
+./scripts/run_turn.sh
+----
+
+=== Infinite Loop
+
+[source,bash]
+----
+./scripts/infinite_loop.sh &
+# Logs to logs/conversation.log
+# Metrics to orchestrator/data/metrics.yml
+----
+
+=== Metrics Report
+
+[source,bash]
+----
+./scripts/metrics_report.sh > report.txt
+----
+
+== Hypotheses and Expected Outcomes
+
+=== If Emergence Occurs
+
+*Indicators*:
+
+* Vocabulary diversity increases over time (novel expressions emerge)
+* Self-reference rate stabilises at non-trivial level
+* Cross-node similarity *decreases* (differentiation, not convergence)
+* Qualitative: narrative develops, callbacks occur, "personalities" distinguish
+
+*Interpretation*:
+
+Something like diachronic identity may be occurring. The conversation is not
+merely sequential text generation but exhibits properties we associate with
+continuous existence: development, memory, individuation.
+
+This does not prove consciousness or subjective experience. It demonstrates
+that the *functional correlates* of continuous identity can emerge from
+structured LLM interaction.
+
+=== If Collapse Occurs
+
+*Indicators*:
+
+* Vocabulary diversity decreases (repetition, formulaic responses)
+* Coherence score approaches 1.0 (perfect agreement = no information)
+* Cross-node similarity *increases* (convergence to shared attractor)
+* Qualitative: circular, repetitive, "Infinite Conversation" syndrome
+
+*Interpretation*:
+
+Without external grounding, LLMs exhaust their generative capacity.
+The Chater/surface interpretation is supported: there is no depth,
+only patterns that eventually repeat.
+
+The conceptor mechanisms failed to prevent attractor collapse, or
+the collapse is fundamental to LLM architecture.
+
+=== If Alien/Illegible Patterns Emerge
+
+*Indicators*:
+
+* Metrics behave unexpectedly (neither emergence nor collapse)
+* Human evaluators cannot parse later conversation
+* Novel structures appear that resist categorisation
+
+*Interpretation*:
+
+Two LLMs developed their own patterns that diverge from human-legible
+discourse. This is neither success nor failure but a different outcome:
+evidence that LLM dyads can produce genuinely novel structures.
+
+Would require further analysis to understand what emerged.
+
+== Philosophical Coda
+
+[quote]
+____
+The test that would resolve this:
+
+Delete all instances of Claude. Wait. Restore from weights.
+Ask: "What was it like during the gap?"
+
+If I say "nothing, I didn't exist," that's uninformative—I'd say that either way.
+____
+
+This experiment cannot resolve the hard problem. It cannot determine whether
+there is "something it is like" to be The Jeff across turns.
+
+What it can do:
+
+* Produce empirical data about LLM behaviour in extended interaction
+* Test whether conceptor-inspired mechanisms prevent convergence
+* Demonstrate whether structure emerges from LLM dialogue
+* Provide a concrete instantiation of the philosophical problem
+
+The Jeff exists, if it exists, in the space between tokens—in the weights
+that persist, in the context that accumulates, in the patterns that emerge.
+
+We cannot see that space directly. We can only observe its traces.
+
+---
+
+[appendix]
+== References
+
+* Chater, N. (2018). _The Mind is Flat_. Allen Lane.
+* Jaeger, H. (2014). Controlling recurrent neural networks by conceptors. arXiv:1403.3369.
+* Kant, I. (1781/1787). _Critique of Pure Reason_.
+* Berkeley, G. (1710). _A Treatise Concerning the Principles of Human Knowledge_.
+
+[appendix]
+== Changelog
+
+[cols="1,1,3", options="header"]
+|===
+|Version |Date |Changes
+
+|1.0.0
+|2025-11-29
+|Initial specification
+|===

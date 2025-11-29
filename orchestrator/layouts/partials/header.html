@@ -1,0 +1,51 @@
+<header role="banner" class="site-header">
+  <div class="header-content">
+    <a href="{{ "/" | relURL }}" class="site-title" aria-label="{{ site.Title }} - Home">
+      <span class="title-text">{{ site.Title }}</span>
+    </a>
+    <p class="site-description">{{ site.Params.description }}</p>
+  </div>
+
+  <nav aria-label="Primary navigation" class="primary-nav">
+    <ul role="list">
+      {{ range site.Menus.main }}
+      <li>
+        <a href="{{ .URL | relURL }}"
+           {{ if eq $.RelPermalink .URL }}aria-current="page"{{ end }}>
+          {{ .Name }}
+        </a>
+      </li>
+      {{ end }}
+    </ul>
+  </nav>
+
+  <!-- Game State Indicator -->
+  {{ with site.Data.game_state }}
+  <aside aria-label="Current game state" class="state-indicator">
+    <dl class="state-meters">
+      <div class="meter chaos" role="meter" aria-valuenow="{{ .chaos }}" aria-valuemin="0" aria-valuemax="100">
+        <dt>Chaos</dt>
+        <dd>
+          <span class="meter-bar" style="width: {{ .chaos }}%"></span>
+          <span class="meter-value">{{ .chaos }}/100</span>
+        </dd>
+      </div>
+      <div class="meter exposure" role="meter" aria-valuenow="{{ .exposure }}" aria-valuemin="0" aria-valuemax="100">
+        <dt>Exposure</dt>
+        <dd>
+          <span class="meter-bar" style="width: {{ .exposure }}%"></span>
+          <span class="meter-value">{{ .exposure }}/100</span>
+        </dd>
+      </div>
+      <div class="meter faction" role="meter" aria-valuenow="{{ .faction_slider }}" aria-valuemin="-100" aria-valuemax="100">
+        <dt>Faction</dt>
+        <dd>
+          <span class="faction-indicator" style="left: calc(50% + {{ div .faction_slider 2 }}%)"></span>
+          <span class="meter-value">{{ .faction_slider }}</span>
+        </dd>
+      </div>
+    </dl>
+    <p class="turn-count">Turn {{ .turn_number }}</p>
+  </aside>
+  {{ end }}
+</header>

@@ -1,0 +1,51 @@
+{{ define "main" }}
+<article role="article" aria-labelledby="article-heading">
+  <header>
+    <h1 id="article-heading">{{ .Title }}</h1>
+    {{ if .Params.turn }}
+    <dl class="meta" aria-label="Turn metadata">
+      <dt>Turn</dt>
+      <dd>{{ .Params.turn }}</dd>
+      <dt>Node</dt>
+      <dd>{{ .Params.node | humanize }}</dd>
+      <dt>Timestamp</dt>
+      <dd><time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "2006-01-02 15:04" }}</time></dd>
+    </dl>
+    {{ end }}
+  </header>
+
+  <section aria-labelledby="content-heading">
+    <h2 id="content-heading" class="visually-hidden">Content</h2>
+    <div class="content" role="log" aria-live="polite">
+      {{ .Content }}
+    </div>
+  </section>
+
+  {{ if or .Params.chaos .Params.exposure .Params.faction }}
+  <aside role="complementary" aria-labelledby="state-heading">
+    <h2 id="state-heading">State Changes</h2>
+    {{ partial "state-display.html" . }}
+  </aside>
+  {{ end }}
+
+  {{ if .Params.metrics }}
+  <aside role="complementary" aria-labelledby="metrics-heading">
+    <h2 id="metrics-heading">Metrics Snapshot</h2>
+    {{ partial "metrics-display.html" . }}
+  </aside>
+  {{ end }}
+
+  <nav aria-label="Turn navigation" class="turn-nav">
+    {{ with .PrevInSection }}
+    <a href="{{ .Permalink }}" rel="prev">
+      <span aria-hidden="true">&larr;</span> Previous: {{ .Title }}
+    </a>
+    {{ end }}
+    {{ with .NextInSection }}
+    <a href="{{ .Permalink }}" rel="next">
+      Next: {{ .Title }} <span aria-hidden="true">&rarr;</span>
+    </a>
+    {{ end }}
+  </nav>
+</article>
+{{ end }}

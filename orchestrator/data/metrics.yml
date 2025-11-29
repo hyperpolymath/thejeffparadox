@@ -1,0 +1,24 @@
+# Metrics - The Jeff Paradox
+# Accumulated metrics from the conversation
+
+# Current snapshot (updated each turn)
+turn_number: 0
+vocabulary_diversity: 1.0
+self_reference_rate: 0.0
+other_reference_rate: 0.0
+topic_drift: 0.0
+coherence_score: 1.0
+convergence_index: 0.0
+novel_ngrams: 0
+
+# Detected patterns
+emergent_patterns: []
+
+# Trends (computed over windows)
+trends:
+  vocabulary_diversity: "insufficient_data"
+  convergence_index: "insufficient_data"
+  coherence_score: "insufficient_data"
+
+# Checkpoint history (last 10)
+checkpoints: []

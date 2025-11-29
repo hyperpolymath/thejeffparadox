@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+vendor/
+.bundle/
+
+# Build outputs
+_site/
+public/
+resources/
+
+# Jekyll
+.jekyll-cache/
+.jekyll-metadata
+.sass-cache/
+
+# Hugo
+/orchestrator/public/
+
+# Julia
+*.jl.cov
+*.jl.mem
+Manifest.toml
+
+# Logs
+logs/
+*.log
+
+# Runtime
+.jeff_paradox.pid
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# API keys (NEVER commit these)
+**/secrets/
+**/*.key
+**/*.pem
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary
+tmp/
+temp/
+*.tmp

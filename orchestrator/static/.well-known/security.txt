@@ -1,0 +1,6 @@
+# Security Policy for The Jeff Paradox
+Contact: mailto:security@example.com
+Expires: 2026-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://thejeffparadox.example.com/.well-known/security.txt
+Policy: https://thejeffparadox.example.com/security-policy/
