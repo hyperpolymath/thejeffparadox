@@ -1,0 +1,73 @@
+# Dependabot configuration
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+
+registries:
+  # No private registries needed currently
+
+updates:
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    reviewers:
+      - "Hyperpolymath"
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # Hugo modules (Go)
+  - package-ecosystem: "gomod"
+    directory: "/orchestrator"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:00"
+      timezone: "UTC"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "hugo"
+    reviewers:
+      - "Hyperpolymath"
+    open-pull-requests-limit: 5
+    ignore:
+      # Ignore major version updates (manual review)
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # Docker (if we add containerisation)
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "09:00"
+      timezone: "UTC"
+    commit-message:
+      prefix: "docker"
+    labels:
+      - "dependencies"
+      - "docker"
+    reviewers:
+      - "Hyperpolymath"
+    open-pull-requests-limit: 3
+
+# Note: Julia packages are managed via Project.toml/Manifest.toml
+# Dependabot doesn't natively support Julia, but we have a workflow
+# that runs `Pkg.update()` periodically

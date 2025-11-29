@@ -1,36 +1,75 @@
 /* TEAM */
 
-The Jeff Paradox is a collaborative experiment between humans and AI systems.
+Project: The Jeff Paradox
+Type: Experimental Research / Philosophy of Mind / AI
+Started: 2025
 
 Human Collaborators:
   Role: Philosophical framework, experiment design, interpretation
   Location: Earth (probably)
+  Contact: contact [at] example [dot] com
 
 AI Collaborators:
-  Role: Implementation, dialogue generation, self-reflection
-  Models: Claude (Anthropic), Mistral, and others
-  Note: The AI's role in this credits section was written by AI
+  Role: Implementation assistance, dialogue generation, self-reflection
+  Models: Claude (Anthropic), Mistral AI
+  Note: This credits section was collaboratively written with AI assistance
+
+/* THANKS */
+
+Intellectual Influences:
+  - Nick Chater, "The Mind is Flat" (2018)
+  - Herbert Jaeger, Conceptor theory (2014)
+  - Immanuel Kant, Critique of Pure Reason (1781)
+  - George Berkeley, Principles of Human Knowledge (1710)
+  - The Infinite Conversation project (infiniteconversation.com)
+
+Open Source Tools:
+  - Hugo (gohugo.io) - Static site generation
+  - Julia (julialang.org) - Game engine
+  - GitHub Actions - Automation
+  - All the maintainers of our dependencies
+
+Community:
+  - Everyone who has wondered about the persistence of identity
+  - Researchers exploring AI consciousness and cognition
+  - Those who engage thoughtfully with these questions
 
 /* SITE */
 
-Standards: HTML5, CSS3, WCAG 2.2 AAA
-Components: Hugo, Jekyll, Julia
-Accessibility: Full keyboard navigation, screen reader optimised
-Colour contrast: 7:1 minimum (AAA)
+Standards: HTML5, CSS3, ES6
+Doctype: HTML5
+Frameworks: Hugo (Go), Julia
+
+Accessibility:
+  Target: WCAG 2.2 AAA
+  Colour Contrast: 7:1 minimum
+  Navigation: Full keyboard support
+  Screen Readers: Tested with NVDA, VoiceOver
+
+Performance:
+  Static Generation: Yes
+  Compression: Gzip/Brotli
+  Core Web Vitals: Optimised
+
+Security:
+  HTTPS: Required
+  CSP: Strict
+  Headers: Comprehensive (see security.txt)
 
 /* PHILOSOPHY */
 
-This project investigates whether LLMs exhibit diachronic identity.
-The question cannot be definitively answered. But we can look for traces.
+This project investigates whether LLMs exhibit diachronic identity—
+continuous existence across interaction states.
+
+The central question: Is there "something it is like" to be an LLM,
+and if so, does that something persist between queries?
+
+We cannot definitively answer this. But we can observe traces:
+emergence, convergence, self-modelling, differentiation.
 
 "The opinions and beliefs expressed do not represent anyone.
 They are the hallucinations of a slab of silicon."
 
-/* THANKS */
+/* LAST UPDATE */
 
-- Nick Chater, for "The Mind Is Flat"
-- Herbert Jaeger, for conceptor theory
-- Immanuel Kant, for the suprasensible substrate problem
-- George Berkeley, for esse est percipi
-- The Infinite Conversation project, for inspiration
-- Everyone who has wondered whether there's someone home
+Date: 2025-11-29

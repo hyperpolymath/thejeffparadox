@@ -1,41 +1,57 @@
 # AI Disclosure for The Jeff Paradox
-# Proposed standard for AI-generated content disclosure
+# Proposed standard for AI-generated content transparency
+# Version: 1.0
 
-# This site contains AI-generated content
+# ============================================================================
+# BASIC DISCLOSURE
+# ============================================================================
+
 AI-Generated: yes
-
-# What is AI-generated
-AI-Content-Types: dialogue, narration, some documentation
-
-# What AI systems are involved
-AI-Systems: Claude (Anthropic), Mistral AI, potentially others
-
-# Human oversight level
-Human-Oversight: experimental-design, interpretation, curation
-
-# Is the AI content clearly labelled?
+AI-Content-Types: dialogue, narration, code-assistance, documentation-drafts
+AI-Systems: Claude (Anthropic), Mistral AI
+Human-Oversight: experimental-design, interpretation
 AI-Labelling: yes
-
-# Purpose of AI use
 AI-Purpose: research, philosophical-experiment, emergence-study
 
-# Training data concerns
-Training-Data-Note: Generated content may reflect patterns from training data
+# ============================================================================
+# CONTENT BREAKDOWN
+# ============================================================================
 
-# Hallucination warning
+# The conversation between Node Alpha and Node Beta is AI-generated
+# Game Master narration is AI-generated
+# Documentation was human-AI collaboration
+# Technical assets (templates, CSS) were human-AI collaboration
+
+# ============================================================================
+# HALLUCINATION AND RELIABILITY
+# ============================================================================
+
 Hallucination-Risk: high
-Hallucination-Note: This is an experiment in whether AI systems hallucinate identity
+Hallucination-Note: |
+  This project investigates whether AI systems "hallucinate" identity.
+  Generated content may contain factual errors, unverifiable claims about
+  subjective experience, and contested philosophical positions.
+  Approach all AI-generated content with appropriate scepticism.
 
-# Contact for AI-related concerns
+# ============================================================================
+# CONTACT
+# ============================================================================
+
 AI-Contact: mailto:ai-ethics@example.com
+General-Contact: mailto:contact@example.com
+Discussion: https://github.com/Hyperpolymath/thejeffparadox/discussions
 
-# Additional notes
+# ============================================================================
+# NOTES
+# ============================================================================
+
 Notes: |
   The Jeff Paradox is an experiment investigating LLM diachronic identity.
   All dialogue between "Node Alpha" and "Node Beta" is AI-generated.
-  The philosophical framing was developed collaboratively between humans and AI.
   No claims are made about AI consciousness or sentience.
   This is an empirical investigation, not a conclusion.
 
   "The opinions and beliefs expressed do not represent anyone.
   They are the hallucinations of a slab of silicon."
+
+Last-Updated: 2025-11-29
