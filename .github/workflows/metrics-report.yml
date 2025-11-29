@@ -1,115 +1,52 @@
 # Metrics Report
 # Generates periodic metrics reports for the conversation
+# RSR Compliant: SHA-pinned
 
 name: Metrics Report
 
 on:
   schedule:
-    # Daily at midnight
     - cron: "0 0 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
-  issues: write
 
 jobs:
   report:
     name: Generate Report
     runs-on: ubuntu-latest
 
-    # Only run if conversation is active
     if: ${{ vars.CONVERSATION_ENABLED == 'true' }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Setup Julia
-        uses: julia-actions/setup-julia@v1
+        uses: julia-actions/setup-julia@9b79636afcfb07ab02c256cede01fe2db6ba808c # v2.6.0
         with:
           version: "1.10"
 
       - name: Cache Julia packages
-        uses: julia-actions/cache@v1
-
-      - name: Install dependencies
-        run: |
-          cd engine
-          julia --project=. -e 'using Pkg; Pkg.instantiate()'
+        uses: julia-actions/cache@d10a6fd8f31b12404a54613ebad242900567f2b9 # v2.1.0
 
       - name: Generate metrics report
-        id: metrics
         run: |
           cd engine
-          julia --project=. -e '
-            using JeffEngine
-            using Dates
-
-            config_path = joinpath(dirname(@__DIR__), "orchestrator", "data", "game_state.yml")
-
-            if !isfile(config_path)
-                println("No game state found")
-                exit(0)
-            end
-
-            game = load_game_state(config_path, Dict())
-
-            # Generate report
-            report = """
-            # The Jeff Paradox - Metrics Report
-
-            Generated: $(Dates.format(now(), "yyyy-mm-dd HH:MM:SS UTC"))
-
-            ## Game State
-
-            | Metric | Value |
-            |--------|-------|
-            | Turn | $(game.turn_number) |
-            | Chaos | $(game.chaos)/100 |
-            | Exposure | $(game.exposure)/100 |
-            | Faction | $(game.faction_slider) |
-
-            ## Current Metrics
-
-            $(metrics_summary(game))
-
-            ## Threshold Status
-
-            $(let events = check_thresholds(game.chaos, game.exposure, game.faction_slider)
-                isempty(events) ? "No thresholds triggered" : join(["- $(e)" for e in events], "\n")
-            end)
-
-            ## Convergence Analysis
-
-            $(let warning = convergence_warning(game)
-                warning === nothing ? "Convergence levels normal" : warning
-            end)
-
-            ## Pattern Quarantine
-
-            $(isempty(game.pattern_quarantine) ? "No patterns quarantined" :
-                join(["- \"$(p)\"" for p in game.pattern_quarantine[max(1,end-9):end]], "\n"))
-            """
-
-            # Save report
-            report_path = joinpath(dirname(@__DIR__), "docs", "reports", "daily-$(Dates.format(now(), "yyyy-mm-dd")).md")
-            mkpath(dirname(report_path))
-            write(report_path, report)
-
-            println(report)
-          '
+          julia scripts/generate_report.jl
+        continue-on-error: true
 
       - name: Commit report
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          git add docs/reports/
+          git add docs/reports/ 2>/dev/null || true
           git diff --staged --quiet || git commit -m "docs: daily metrics report [automated]"
 
       - name: Push changes
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # v1.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
@@ -118,4 +55,8 @@ jobs:
         run: |
           echo "## Daily Metrics Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          cat docs/reports/daily-$(date +%Y-%m-%d).md >> $GITHUB_STEP_SUMMARY || echo "Report not generated"
+          if [ -f "docs/reports/daily-$(date +%Y-%m-%d).md" ]; then
+            cat "docs/reports/daily-$(date +%Y-%m-%d).md" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Report not generated (no game state)" >> $GITHUB_STEP_SUMMARY
+          fi
