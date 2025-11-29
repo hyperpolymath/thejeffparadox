@@ -72,74 +72,10 @@ jobs:
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
           FORCE_NODE: ${{ inputs.force_node || 'auto' }}
           FORCE_DIVERSITY: ${{ inputs.diversity_injection || 'false' }}
+          GITHUB_OUTPUT: ${{ github.output }}
         run: |
           cd engine
-          julia --project=. -e '
-            using JeffEngine
-            using Dates
-
-            # Load or initialise game state
-            config_path = joinpath(dirname(@__DIR__), "orchestrator", "data", "game_state.yml")
-
-            if isfile(config_path)
-                game = load_game_state(config_path, Dict())
-            else
-                game = initialise_game_state(config_path)
-            end
-
-            # Load nodes
-            alpha = initialise_node_state(joinpath(dirname(@__DIR__), "node-alpha", "data", "node_state.yml"))
-            beta = initialise_node_state(joinpath(dirname(@__DIR__), "node-beta", "data", "node_state.yml"))
-            nodes = Dict(:alpha => alpha, :beta => beta)
-
-            # Force node if specified
-            force_node = get(ENV, "FORCE_NODE", "auto")
-            if force_node != "auto"
-                game.current_node = Symbol(force_node)
-            end
-
-            # Force diversity if specified
-            if get(ENV, "FORCE_DIVERSITY", "false") == "true"
-                game.last_diversity_turn = 0
-            end
-
-            # Execute turn
-            println("Executing turn $(game.turn_number + 1)...")
-            result = execute_turn(game, nodes)
-
-            # Save state
-            save_game_state(game, config_path)
-
-            # Save turn as markdown
-            turn_filename = @sprintf("%04d-%s.md", result.turn_number, lowercase(result.node_name))
-
-            # Save to orchestrator
-            orch_path = joinpath(dirname(@__DIR__), "orchestrator", "content", "turns", turn_filename)
-            mkpath(dirname(orch_path))
-            save_turn_to_markdown(result, orch_path)
-
-            # Save to node
-            node_dir = result.node_name == "Alpha" ? "node-alpha" : "node-beta"
-            node_path = joinpath(dirname(@__DIR__), node_dir, "content", "turns", turn_filename)
-            mkpath(dirname(node_path))
-            save_turn_to_markdown(result, node_path)
-
-            # Output for GitHub Actions
-            println("::set-output name=turn_number::$(result.turn_number)")
-            println("::set-output name=node::$(result.node_name)")
-            println("::set-output name=chaos::$(game.chaos)")
-            println("::set-output name=exposure::$(game.exposure)")
-            println("::set-output name=faction::$(game.faction_slider)")
-
-            # Print metrics
-            println("\n$(metrics_summary(game))")
-
-            # Check for threshold events
-            events = check_thresholds(game.chaos, game.exposure, game.faction_slider)
-            if !isempty(events)
-                println("\n⚠️ THRESHOLD EVENTS: $(events)")
-            end
-          '
+          julia scripts/execute_turn.jl
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@16361eb4acea8698b220b76c0d4e84e1fd22c61d # v2.6.0
