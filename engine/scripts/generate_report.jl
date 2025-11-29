@@ -4,7 +4,7 @@
 #
 
 using Pkg
-Pkg.activate(@__DIR__ * "/..")
+Pkg.activate(joinpath(@__DIR__, ".."))
 Pkg.instantiate()
 
 include(joinpath(@__DIR__, "..", "src", "JeffEngine.jl"))

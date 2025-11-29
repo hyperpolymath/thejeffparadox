@@ -7,7 +7,7 @@
 
 # First, ensure the local package is available
 using Pkg
-Pkg.activate(@__DIR__ * "/..")
+Pkg.activate(joinpath(@__DIR__, ".."))
 Pkg.instantiate()
 
 # Now include the module directly (more reliable than registry lookup)
