@@ -1,17 +1,17 @@
 # Security Policy for The Jeff Paradox
 # https://securitytxt.org/ - RFC 9116
 
-Contact: mailto:security@example.com
+Contact: mailto:security@metadatastician.art
 Contact: https://github.com/Hyperpolymath/thejeffparadox/security/advisories/new
 Expires: 2026-12-31T23:59:59.000Z
 Preferred-Languages: en
-Canonical: https://thejeffparadox.example.com/.well-known/security.txt
-Policy: https://thejeffparadox.example.com/security-policy/
-Acknowledgments: https://thejeffparadox.example.com/security-acknowledgments/
-Hiring: https://thejeffparadox.example.com/careers/
+Canonical: https://thejeffparadox.metadatastician.art/.well-known/security.txt
+Policy: https://thejeffparadox.metadatastician.art/security-policy/
+Acknowledgments: https://thejeffparadox.metadatastician.art/security-acknowledgments/
+Hiring: https://thejeffparadox.metadatastician.art/careers/
 
 # Encryption: For sensitive reports, use our PGP key
-# Encryption: https://thejeffparadox.example.com/.well-known/pgp-key.txt
+# Encryption: https://thejeffparadox.metadatastician.art/.well-known/pgp-key.txt
 
 # This is an experimental research project investigating LLM diachronic identity.
 # The "security surface" problem discussed in this project is philosophical,
