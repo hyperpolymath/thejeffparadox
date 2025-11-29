@@ -1,0 +1,63 @@
+# Julia Dependency Updates
+# Dependabot doesn't support Julia, so we do it ourselves
+
+name: Julia Dependencies
+
+on:
+  schedule:
+    # Weekly on Thursdays
+    - cron: "0 9 * * 4"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    name: Update Julia Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v1
+        with:
+          version: "1.10"
+
+      - name: Update dependencies
+        run: |
+          cd engine
+          julia --project=. -e '
+            using Pkg
+            Pkg.update()
+          '
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet engine/Manifest.toml; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "deps(julia): update dependencies"
+          title: "deps(julia): update dependencies"
+          body: |
+            Automated Julia dependency update.
+
+            This PR updates the Julia packages in `engine/Manifest.toml`.
+
+            Please review the changes and ensure tests pass before merging.
+          branch: deps/julia-update
+          labels: |
+            dependencies
+            julia
+            automated

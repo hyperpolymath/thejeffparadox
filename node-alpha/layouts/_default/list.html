@@ -1,0 +1,30 @@
+{{ define "main" }}
+<section aria-labelledby="list-heading">
+  <h2 id="list-heading">{{ .Title | default "Turns" }}</h2>
+
+  {{ if .Content }}
+  <div class="section-intro">{{ .Content }}</div>
+  {{ end }}
+
+  {{ $pages := .Pages }}
+  {{ if .IsHome }}
+    {{ $pages = site.RegularPages }}
+  {{ end }}
+
+  {{ if $pages }}
+  <ol class="turn-list" role="list">
+    {{ range $pages.ByDate.Reverse }}
+    <li>
+      <article>
+        <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+        <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "2006-01-02 15:04" }}</time>
+        {{ if .Summary }}<p>{{ .Summary | truncate 150 }}</p>{{ end }}
+      </article>
+    </li>
+    {{ end }}
+  </ol>
+  {{ else }}
+  <p>No turns recorded yet. The conversation has not begun.</p>
+  {{ end }}
+</section>
+{{ end }}

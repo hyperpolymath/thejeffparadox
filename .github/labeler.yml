@@ -1,0 +1,54 @@
+# PR Labeler Configuration
+# https://github.com/actions/labeler
+
+# Engine (Julia)
+engine:
+  - changed-files:
+      - any-glob-to-any-file: "engine/**"
+
+# Hugo sites
+hugo:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "orchestrator/**"
+          - "node-alpha/**"
+          - "node-beta/**"
+
+# Documentation
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+          - "**/*.adoc"
+          - "docs/**"
+
+# CI/CD
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**"
+          - "scripts/**"
+
+# Security
+security:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/security*"
+          - "**/SECURITY*"
+          - ".well-known/**"
+
+# Accessibility
+accessibility:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.css"
+          - "**/layouts/**"
+
+# Configuration
+config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.toml"
+          - "**/*.yml"
+          - "**/*.yaml"
+          - "**/config*"

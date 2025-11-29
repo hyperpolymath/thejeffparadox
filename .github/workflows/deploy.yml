@@ -1,0 +1,91 @@
+# Deploy to GitHub Pages
+# Builds and deploys static sites when main is updated
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+env:
+  HUGO_VERSION: "0.121.0"
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: ${{ env.HUGO_VERSION }}
+          extended: true
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v4
+
+      - name: Build orchestrator (main site)
+        run: |
+          cd orchestrator
+          hugo \
+            --minify \
+            --gc \
+            --baseURL "${{ steps.pages.outputs.base_url }}/"
+
+      - name: Build node-alpha
+        run: |
+          cd node-alpha
+          hugo \
+            --minify \
+            --gc \
+            --baseURL "${{ steps.pages.outputs.base_url }}/node-alpha/"
+
+      - name: Build node-beta
+        run: |
+          cd node-beta
+          hugo \
+            --minify \
+            --gc \
+            --baseURL "${{ steps.pages.outputs.base_url }}/node-beta/"
+
+      - name: Combine sites
+        run: |
+          mkdir -p combined
+          cp -r orchestrator/public/* combined/
+          mkdir -p combined/node-alpha combined/node-beta
+          cp -r node-alpha/public/* combined/node-alpha/
+          cp -r node-beta/public/* combined/node-beta/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./combined
+
+  deploy:
+    name: Deploy
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

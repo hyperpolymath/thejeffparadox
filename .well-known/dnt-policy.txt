@@ -1,0 +1,19 @@
+# Do Not Track Policy
+# https://www.eff.org/dnt-policy
+
+This site honours Do Not Track (DNT) signals.
+
+TRACKING: N
+QUALIFIERS: N
+SAME-PARTY: N
+THIRD-PARTIES: N
+
+# Explanation:
+# - We do not track users
+# - We do not use cookies for tracking
+# - We do not share data with third parties for tracking
+# - Static site generation means no server-side user tracking
+# - GitHub Pages may collect basic access logs (see GitHub's privacy policy)
+
+# For questions about this policy, contact:
+# privacy@example.com

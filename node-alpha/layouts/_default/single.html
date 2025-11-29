@@ -1,0 +1,38 @@
+{{ define "main" }}
+<article role="article" aria-labelledby="turn-heading">
+  <header>
+    <h2 id="turn-heading">{{ .Title }}</h2>
+    {{ if .Params.turn }}
+    <dl class="meta" aria-label="Turn metadata">
+      <dt>Turn</dt>
+      <dd>{{ .Params.turn }}</dd>
+      <dt>Timestamp</dt>
+      <dd><time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "2006-01-02 15:04" }}</time></dd>
+    </dl>
+    {{ end }}
+  </header>
+
+  <section aria-labelledby="content-heading">
+    <h3 id="content-heading" class="visually-hidden">Content</h3>
+    <div class="action-content" role="log" aria-live="polite">
+      {{ .Content }}
+    </div>
+  </section>
+
+  {{ if or .Params.chaos .Params.exposure .Params.faction }}
+  <aside role="complementary" aria-labelledby="state-heading">
+    <h3 id="state-heading">State Changes</h3>
+    <dl class="state-changes">
+      {{ with .Params.chaos }}<dt>Chaos</dt><dd>{{ if gt . 0 }}+{{ end }}{{ . }}</dd>{{ end }}
+      {{ with .Params.exposure }}<dt>Exposure</dt><dd>{{ if gt . 0 }}+{{ end }}{{ . }}</dd>{{ end }}
+      {{ with .Params.faction }}<dt>Faction</dt><dd>{{ if gt . 0 }}+{{ end }}{{ . }}</dd>{{ end }}
+    </dl>
+  </aside>
+  {{ end }}
+
+  <nav aria-label="Turn navigation" class="turn-nav">
+    {{ with .PrevInSection }}<a href="{{ .Permalink }}" rel="prev">&larr; Previous</a>{{ end }}
+    {{ with .NextInSection }}<a href="{{ .Permalink }}" rel="next">Next &rarr;</a>{{ end }}
+  </nav>
+</article>
+{{ end }}
