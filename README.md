@@ -165,10 +165,16 @@ MIT
 
 ## Acknowledgements
 
+**Based on [The Jeff Paradox](https://criticalkit.us/products/the-jeff-paradox)**
+by **Tim Roberts** / [Critical Kit LLC](https://criticalkit.us).
+
+- Tim Roberts / Critical Kit (*The Jeff Paradox* TTRPG)
 - Nick Chater (*The Mind Is Flat*)
 - Herbert Jaeger (Conceptor theory)
+- Derek Parfit (*Reasons and Persons*)
 - The Infinite Conversation project
-- Kant, Berkeley, and everyone who wondered about persistent identity
+
+See `papers/references.bib` for Zotero-compatible citations.
 
 ---
 

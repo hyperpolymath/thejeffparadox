@@ -1,27 +1,8 @@
-# Funding configuration for The Jeff Paradox
-# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+# Funding
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
 
-# GitHub Sponsors username
-github: [Hyperpolymath]
-
-# Patreon username
-# patreon: username
-
-# Open Collective username
+github: Hyperpolymath
+# ko_fi: hyperpolymath
 # open_collective: thejeffparadox
-
-# Ko-fi username
-# ko_fi: username
-
-# Tidelift package identifier
-# tidelift: npm/package-name
-
-# Custom funding URLs (up to 4)
-custom:
-  - https://thejeffparadox.example.com/support
-
-# Note: This is a research project. Any funding goes toward:
-# - Compute costs for running the experiment
-# - API costs for LLM providers
-# - Infrastructure for hosting results
-# - No individual profit
+# custom:
+#   - https://example.com/donate
