@@ -303,9 +303,17 @@ function generate_response(
         model = node.llm_model
         temperature = node.temperature
     else
-        # GM defaults - use environment or fallback
-        provider = get(ENV, "GM_PROVIDER", "local")
-        model = get(ENV, "GM_MODEL", "qwen/qwen3-8b")
+        # GM defaults - prefer cloud providers over local
+        if haskey(ENV, "ANTHROPIC_API_KEY") && !isempty(get(ENV, "ANTHROPIC_API_KEY", ""))
+            provider = "anthropic"
+            model = get(ENV, "GM_MODEL", "claude-sonnet-4-20250514")
+        elseif haskey(ENV, "MISTRAL_API_KEY") && !isempty(get(ENV, "MISTRAL_API_KEY", ""))
+            provider = "mistral"
+            model = get(ENV, "GM_MODEL", "mistral-large-latest")
+        else
+            provider = get(ENV, "GM_PROVIDER", "local")
+            model = get(ENV, "GM_MODEL", "qwen/qwen3-8b")
+        end
         temperature = 0.7
     end
 
