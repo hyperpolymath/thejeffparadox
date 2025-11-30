@@ -19,17 +19,34 @@ using Statistics
 using LinearAlgebra
 using SHA
 
-# Sub-modules
+# Sub-modules - ORDER MATTERS: llm_client before metrics (metrics uses get_embedding)
 include("mechanics.jl")
 include("conceptors.jl")
-include("metrics.jl")
 include("llm_client.jl")
+include("metrics.jl")
 
+# Core types
 export GameState, NodeState, TurnResult
+
+# Mechanics (from mechanics.jl)
 export roll_dice, apply_skill, update_chaos, update_exposure, shift_faction
+export check_thresholds
+
+# Anti-convergence (from conceptors.jl)
 export should_inject_diversity, get_diversity_prompt, should_seed_contradiction
-export compute_metrics, MetricsSnapshot
-export generate_response, build_context
+export get_contradiction_seed, get_quarantine_instruction
+
+# Metrics (from metrics.jl)
+export compute_metrics, MetricsSnapshot, metrics_summary
+
+# LLM (from llm_client.jl)
+export generate_response, build_context, build_gm_context
+export get_embedding, cosine_similarity, semantic_distance
+
+# State management (from this file)
+export initialise_game_state, initialise_node_state
+export load_game_state, save_game_state, save_turn_to_markdown
+export execute_turn
 
 # ============================================================================
 # Core State Types
@@ -107,10 +124,21 @@ end
 """
     initialise_game_state(config_path::String) -> GameState
 
-Load configuration and create initial game state.
+Create initial game state. If config_path exists, load it; otherwise use defaults.
 """
 function initialise_game_state(config_path::String)::GameState
-    config = YAML.load_file(config_path)
+    config = if isfile(config_path)
+        YAML.load_file(config_path)
+    else
+        # Default config when no file exists
+        Dict{String,Any}(
+            "version" => "1.0",
+            "diversity_injection_frequency" => 10,
+            "contradiction_threshold" => 0.85,
+            "min_temperature" => 0.6,
+            "max_temperature" => 1.2
+        )
+    end
 
     GameState(
         15,    # Starting chaos
