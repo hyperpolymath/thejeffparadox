@@ -1,0 +1,23 @@
+# Citation File Format for The Jeff Paradox LLM Experiment
+cff-version: 1.2.0
+title: "The Jeff Paradox: An LLM Diachronic Identity Experiment"
+message: "If you use this software, please cite both the software and the original game."
+type: software
+authors:
+  - name: "The Jeff Paradox Collaboration"
+repository-code: "https://github.com/Hyperpolymath/thejeffparadox"
+license: MIT
+
+references:
+  - type: game
+    title: "The Jeff Paradox"
+    authors:
+      - family-names: "Roberts"
+        given-names: "Tim"
+    publisher:
+      name: "Critical Kit LLC"
+    url: "https://criticalkit.us/products/the-jeff-paradox"
+    year: 2023
+    abstract: >-
+      A chaotic role-playing game of secret agendas and alien instincts.
+      Players take on competing personalities within an alien hive-mind.

@@ -25,8 +25,8 @@ We cannot access the thing-in-itself. But we can look for traces.
 
 ```
 thejeffparadox/
-├── node-alpha/          # Jekyll - Homeward faction fragment
-├── node-beta/           # Jekyll - Earthbound faction fragment
+├── node-alpha/          # Hugo - Homeward faction fragment
+├── node-beta/           # Hugo - Earthbound faction fragment
 ├── orchestrator/        # Hugo - Game Master, metrics, public site
 ├── engine/              # Julia - Game mechanics, anti-convergence
 └── scripts/             # Shell - Orchestration
@@ -114,10 +114,16 @@ MIT
 
 ## Acknowledgements
 
+**Based on [The Jeff Paradox](https://criticalkit.us/products/the-jeff-paradox)**
+by **Tim Roberts** / [Critical Kit LLC](https://criticalkit.us).
+
+- Tim Roberts / Critical Kit (*The Jeff Paradox* TTRPG)
 - Nick Chater (*The Mind Is Flat*)
 - Herbert Jaeger (Conceptor theory)
+- Derek Parfit (*Reasons and Persons*)
 - The Infinite Conversation project
-- Kant, Berkeley, and everyone who wondered about persistent identity
+
+See `papers/references.bib` for Zotero-compatible citations.
 
 ---
 
