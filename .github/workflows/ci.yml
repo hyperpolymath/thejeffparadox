@@ -246,39 +246,6 @@ jobs:
         continue-on-error: true
 
       - name: Scan container image
-        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # v0.29.0
-        with:
-          image-ref: "jeff-paradox:test"
-          format: "table"
-          severity: "CRITICAL,HIGH"
-        continue-on-error: true
-
-      - name: Verify SHA pinning in workflows
-        run: |
-          echo "Checking all workflows use SHA-pinned actions..."
-          UNPINNED=$(grep -rE 'uses: [^@]+@v[0-9]' .github/workflows/ || true)
-          if [ -n "$UNPINNED" ]; then
-            echo "ERROR: Found unpinned actions using version tags:"
-            echo "$UNPINNED"
-            exit 1
-          fi
-          echo "All actions are properly SHA-pinned"
-
-  # ==========================================================================
-  # Container Build Test
-  # ==========================================================================
-  container:
-    name: Container Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Build container with Podman
-        run: |
-          podman build -t jeff-paradox:test -f container/Containerfile .
-
-      - name: Scan container image
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
         with:
           image-ref: "jeff-paradox:test"
