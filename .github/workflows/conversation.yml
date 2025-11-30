@@ -6,11 +6,16 @@ name: Conversation Turn
 
 on:
   schedule:
-    # Run every hour
-    - cron: "0 * * * *"
+    # Run every 6 hours (4 turns per day)
+    - cron: "0 */6 * * *"
 
   workflow_dispatch:
     inputs:
+      turns:
+        description: "Number of turns to execute"
+        required: false
+        type: number
+        default: 1
       force_node:
         description: "Force specific node (alpha/beta)"
         required: false
