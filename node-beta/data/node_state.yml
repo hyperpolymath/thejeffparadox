@@ -36,8 +36,8 @@ personality:
     - "Favours organic metaphors (growing, rooting, seasons)"
 
 llm:
-  provider: "mistral"
-  model: "mistral-large-latest"
+  provider: "anthropic"
+  model: "claude-sonnet-4-20250514"
   temperature: 0.8
   max_tokens: 1024
 
