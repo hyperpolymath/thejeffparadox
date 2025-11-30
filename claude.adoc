@@ -1,7 +1,7 @@
 = The Jeff Paradox: An Experiment in LLM Diachronic Identity
 :author: Collaborative Design (Human + Claude)
-:revdate: 2025-11-29
-:revnumber: 1.0.0
+:revdate: 2025-11-30
+:revnumber: 1.1.0
 :toc: left
 :toclevels: 4
 :sectnums:
@@ -116,18 +116,18 @@ even if we cannot access its ultimate nature.
 
 === Components
 
-==== Node Alpha (Jekyll)
+==== Node Alpha (Hugo)
 
 * *Identity*: Personality fragment of The Jeff with *Homeward* faction alignment
 * *Function*: Maintains conversation state, generates responses via LLM API
-* *Technology*: Jekyll static site, Ruby-based tooling
+* *Technology*: Hugo static site, Go-based tooling
 * *Location*: `node-alpha/`
 
-==== Node Beta (Jekyll)
+==== Node Beta (Hugo)
 
 * *Identity*: Personality fragment of The Jeff with *Earthbound* faction alignment
 * *Function*: Maintains conversation state, generates responses via LLM API
-* *Technology*: Jekyll static site, Ruby-based tooling
+* *Technology*: Hugo static site, Go-based tooling
 * *Location*: `node-beta/`
 
 ==== Orchestrator (Hugo)
@@ -144,14 +144,26 @@ even if we cannot access its ultimate nature.
 
 ==== Engine (Julia)
 
-* *Function*: Core game mechanics, dice rolls, state transitions
+* *Function*: Core game mechanics, dice rolls, state transitions, statistical analysis
 * *Technology*: Julia for numerical computation and tool calling
 * *Responsibilities*:
 ** Chaos counter management
 ** Alien exposure tracking
 ** Faction slider dynamics
 ** Conceptor matrix operations
+** Statistical hypothesis testing (ADF, Hotelling's T², Bayes factors)
+** Trajectory analysis and attractor detection
 * *Location*: `engine/`
+
+==== TUI (Ada)
+
+* *Function*: Terminal User Interface for experiment control
+* *Technology*: Ada 2022 with GNAT toolchain, Alire package manager
+* *Responsibilities*:
+** Real-time experiment monitoring
+** Manual intervention controls
+** Status display and logging
+* *Location*: `tui/`
 
 == Game Mechanics: The Jeff
 
@@ -392,6 +404,44 @@ Cross-Origin-Embedder-Policy: require-corp
 * Rate limiting enforced at orchestrator level
 * Request/response logging excludes sensitive content
 
+== Container Infrastructure
+
+=== Containerfile (Podman/Docker)
+
+Multi-stage build using Wolfi-based images for security:
+
+[source,text]
+----
+Stage 1: julia-builder    - Compiles Julia engine and dependencies
+Stage 2: ada-builder      - Compiles Ada TUI (optional)
+Stage 3: hugo-builder     - Builds all Hugo static sites
+Stage 4: runtime          - Minimal production image
+----
+
+=== Key Features
+
+* *Base Image*: `cgr.dev/chainguard/wolfi-base` (minimal, secure)
+* *Non-root User*: Runs as `jeff:jeff` (UID 1000)
+* *Read-only*: Container marked as read-only capable
+* *Capabilities*: All capabilities dropped
+* *Health Check*: Julia-based liveness probe
+
+=== Usage
+
+[source,bash]
+----
+# Build
+podman build -t jeff-paradox -f container/Containerfile .
+
+# Run
+podman run -it --rm \
+  -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
+  jeff-paradox
+
+# With compose
+podman-compose -f container/podman-compose.yml up
+----
+
 == Accessibility (WCAG 2.2 AAA Target)
 
 === Structural
@@ -437,27 +487,49 @@ thejeffparadox/
 ├── claude.adoc                 # This document
 ├── README.md                   # Quick start
 ├── LICENSE                     # MIT
-├── .well-known/
+├── SECURITY.md                 # Security policy
+├── cliff.toml                  # git-cliff changelog config
+│
+├── .github/                    # GitHub configuration
+│   ├── workflows/              # CI/CD pipelines
+│   │   ├── ci.yml              # Main CI (lint, test, build)
+│   │   ├── deploy.yml          # GitHub Pages deployment
+│   │   ├── conversation.yml    # Automated conversation turns
+│   │   ├── codeql.yml          # Security analysis
+│   │   ├── metrics-report.yml  # Automated metrics reporting
+│   │   └── release.yml         # Semantic releases
+│   ├── ISSUE_TEMPLATE/         # Issue templates
+│   ├── DISCUSSION_TEMPLATE/    # Discussion templates
+│   └── dependabot.yml          # Dependency updates
+│
+├── .well-known/                # Well-known resources
 │   ├── security.txt
 │   ├── humans.txt
-│   └── ai.txt
+│   ├── ai.txt
+│   ├── gpc.json
+│   └── dnt-policy.txt
 │
-├── node-alpha/                 # Jekyll site - Homeward faction
-│   ├── _config.yml
-│   ├── _data/
-│   │   ├── node_state.yml      # This node's hidden state
-│   │   └── skills.yml
-│   ├── _posts/                 # This node's turns
-│   ├── _includes/
-│   ├── _layouts/
-│   │   └── turn.html
-│   ├── assets/
-│   │   └── css/
-│   │       └── main.css
-│   ├── Gemfile
-│   └── index.html
+├── container/                  # Container infrastructure
+│   ├── Containerfile           # Multi-stage Wolfi build
+│   ├── podman-compose.yml      # Compose orchestration
+│   └── .env.example            # Environment template
 │
-├── node-beta/                  # Jekyll site - Earthbound faction
+├── node-alpha/                 # Hugo site - Homeward faction
+│   ├── hugo.toml               # Hugo configuration
+│   ├── data/
+│   │   └── node_state.yml      # This node's hidden state
+│   ├── content/
+│   │   └── _index.md
+│   ├── layouts/
+│   │   └── _default/
+│   │       ├── baseof.html
+│   │       ├── single.html
+│   │       └── list.html
+│   └── static/
+│       └── css/
+│           └── main.css
+│
+├── node-beta/                  # Hugo site - Earthbound faction
 │   └── [mirror structure of node-alpha]
 │
 ├── orchestrator/               # Hugo site - Game Master
@@ -488,8 +560,38 @@ thejeffparadox/
 │   │   ├── mechanics.jl        # Dice, chaos, exposure
 │   │   ├── conceptors.jl       # Anti-convergence
 │   │   ├── metrics.jl          # Emergence tracking
+│   │   ├── statistics.jl       # Hypothesis testing framework
 │   │   └── llm_client.jl       # API abstraction
+│   ├── scripts/
+│   │   ├── execute_turn.jl
+│   │   ├── run_tests.jl
+│   │   └── generate_report.jl
+│   ├── docs/
+│   │   └── statistical_framework.md
 │   └── test/
+│       └── runtests.jl
+│
+├── tui/                        # Ada Terminal UI
+│   ├── alire.toml              # Alire package manifest
+│   ├── jeff_tui.gpr            # GNAT project file
+│   └── src/                    # Ada source files
+│
+├── papers/                     # Research documentation
+│   ├── whitepaper.md           # Full research paper
+│   ├── validity_framework.md   # Validity testing framework
+│   └── press_summary.md        # Press-ready summary
+│
+├── docs/                       # Wiki documentation
+│   └── wiki/
+│       ├── Home.md
+│       ├── Architecture.md
+│       ├── Getting-Started.md
+│       ├── Philosophy.md
+│       └── FAQ.md
+│
+├── dns/                        # DNS configuration
+│   ├── README.md
+│   └── zone-security.txt       # DNSSEC/CAA records
 │
 └── scripts/                    # Shell orchestration
     ├── run_turn.sh             # Execute single turn
@@ -499,7 +601,7 @@ thejeffparadox/
 
 == Configuration
 
-=== Node Configuration (`_data/node_state.yml`)
+=== Node Configuration (`data/node_state.yml`)
 
 [source,yaml]
 ----
@@ -594,15 +696,17 @@ LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [source,bash]
 ----
-# Julia 1.9+
+# Julia 1.10+
 julia --version
-
-# Ruby 3.0+ with Bundler
-ruby --version
-bundle --version
 
 # Hugo extended 0.120+
 hugo version
+
+# Ada/GNAT toolchain (optional, for TUI)
+alr --version
+
+# Podman (optional, for containerised deployment)
+podman --version
 
 # Environment variables
 export ANTHROPIC_API_KEY="sk-ant-..."
@@ -616,9 +720,8 @@ export MISTRAL_API_KEY="..."
 # Install Julia dependencies
 cd engine && julia --project=. -e 'using Pkg; Pkg.instantiate()'
 
-# Install Ruby dependencies for nodes
-cd node-alpha && bundle install
-cd node-beta && bundle install
+# Build Ada TUI (optional)
+cd tui && alr build
 ----
 
 === Single Turn
@@ -642,6 +745,59 @@ cd node-beta && bundle install
 [source,bash]
 ----
 ./scripts/metrics_report.sh > report.txt
+----
+
+== CI/CD Automation
+
+=== GitHub Actions Workflows
+
+[cols="1,2", options="header"]
+|===
+|Workflow |Purpose
+
+|`ci.yml`
+|Main CI pipeline: linting, Julia tests, Hugo builds
+
+|`deploy.yml`
+|Deploy Hugo sites to GitHub Pages
+
+|`conversation.yml`
+|Scheduled/manual conversation turn execution
+
+|`codeql.yml`
+|Security vulnerability scanning (CodeQL)
+
+|`metrics-report.yml`
+|Generate and archive metrics reports
+
+|`release.yml`
+|Semantic versioning and changelog generation
+
+|`julia-deps.yml`
+|Julia package dependency updates
+
+|`labeler.yml`
+|Automatic PR labelling
+
+|`stale.yml`
+|Mark inactive issues/PRs as stale
+
+|`greetings.yml`
+|Welcome messages for first-time contributors
+|===
+
+=== Running Conversation Turns via CI
+
+The `conversation.yml` workflow can be triggered:
+
+* *Scheduled*: Configurable cron (e.g., hourly)
+* *Manual*: Via `workflow_dispatch` with parameters
+* *API*: Using GitHub Actions API for external triggering
+
+[source,bash]
+----
+# Manual trigger via gh CLI
+gh workflow run conversation.yml -f turns=5 -f model=claude-sonnet-4-20250514
 ----
 
 == Hypotheses and Expected Outcomes
@@ -743,6 +899,18 @@ We cannot see that space directly. We can only observe its traces.
 [cols="1,1,3", options="header"]
 |===
 |Version |Date |Changes
+
+|1.1.0
+|2025-11-30
+a|Architecture alignment with implementation:
+
+* Nodes changed from Jekyll to Hugo (matching actual implementation)
+* Added TUI component documentation (Ada/Alire)
+* Added Container Infrastructure section (Podman/Wolfi)
+* Added CI/CD Automation section with workflow documentation
+* Updated Directory Structure to reflect all components
+* Updated Engine documentation to include statistics.jl
+* Updated prerequisites (removed Ruby, added Podman/Alire)
 
 |1.0.0
 |2025-11-29
