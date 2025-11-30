@@ -1,0 +1,49 @@
+# Git attributes - RSR Compliant
+# See: https://git-scm.com/docs/gitattributes
+
+# Auto-detect text files and normalise line endings
+* text=auto eol=lf
+
+# Source code
+*.jl text
+*.sh text eol=lf
+*.bash text eol=lf
+*.toml text
+*.yml text
+*.yaml text
+*.json text
+*.md text
+*.adoc text
+
+# Hugo templates
+*.html text
+*.css text
+*.js text
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Archives
+*.tar.gz binary
+*.zip binary
+
+# Lock files - don't merge
+Manifest.toml merge=ours
+
+# Linguist overrides
+*.adoc linguist-documentation=false
+docs/** linguist-documentation
+papers/** linguist-documentation
+
+# Generated - exclude from stats
+orchestrator/public/** linguist-generated
+node-alpha/public/** linguist-generated
+node-beta/public/** linguist-generated
