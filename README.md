@@ -28,7 +28,13 @@ thejeffparadox/
 ├── node-alpha/          # Hugo - Homeward faction fragment
 ├── node-beta/           # Hugo - Earthbound faction fragment
 ├── orchestrator/        # Hugo - Game Master, metrics, public site
-├── engine/              # Julia - Game mechanics, anti-convergence
+├── engine/              # Julia - Game mechanics, statistics, anti-convergence
+├── tui/                 # Ada - Terminal UI for experiment control
+├── container/           # Podman - Containerised deployment (Wolfi-based)
+├── papers/              # Research - Whitepaper, validity framework
+├── docs/wiki/           # Documentation - Architecture, FAQ, guides
+├── dns/                 # DNS - DNSSEC/CAA configuration
+├── .github/workflows/   # CI/CD - Build, test, deploy, conversation automation
 └── scripts/             # Shell - Orchestration
 ```
 
@@ -36,9 +42,13 @@ thejeffparadox/
 
 ### Prerequisites
 
-- Julia 1.9+
+- Julia 1.10+
 - Hugo extended 0.120+
 - At least one LLM API key (Anthropic, Mistral, or local)
+
+Optional:
+- Ada/GNAT with Alire (for TUI)
+- Podman (for containerised deployment)
 
 ### Setup
 
@@ -49,6 +59,9 @@ cd engine && julia --project=. -e 'using Pkg; Pkg.instantiate()'
 # Set API keys
 export ANTHROPIC_API_KEY="sk-ant-..."
 export MISTRAL_API_KEY="..."
+
+# Optional: Build Ada TUI
+cd tui && alr build
 ```
 
 ### Run
@@ -64,6 +77,30 @@ TURN_DELAY=3600 ./scripts/infinite_loop.sh &
 ./scripts/metrics_report.sh
 ```
 
+### Container Deployment
+
+```bash
+# Build image
+podman build -t jeff-paradox -f container/Containerfile .
+
+# Run
+podman run -it --rm -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" jeff-paradox
+
+# Or use compose
+podman-compose -f container/podman-compose.yml up
+```
+
+## Components
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| Node Alpha | Hugo | Homeward faction personality fragment |
+| Node Beta | Hugo | Earthbound faction personality fragment |
+| Orchestrator | Hugo | Game Master, turn sequencing, public rendering |
+| Engine | Julia | Mechanics, metrics, statistical hypothesis testing |
+| TUI | Ada 2022 | Terminal interface for experiment control |
+| Container | Wolfi/Podman | Secure, minimal container deployment |
+
 ## Anti-Convergence
 
 The experiment implements conceptor-inspired mechanisms to prevent the
@@ -74,7 +111,7 @@ conversation from collapsing into repetitive patterns:
 - **Aperture control**: Temperature modulation based on vocabulary diversity
 - **Pattern quarantine**: Discourage overused phrases
 
-## Metrics
+## Metrics & Statistics
 
 We track:
 - Vocabulary diversity (type-token ratio)
@@ -83,6 +120,21 @@ We track:
 - Coherence (local semantic consistency)
 - Convergence index (cross-node similarity)
 - Novel n-grams (emergence indicator)
+
+Statistical framework includes:
+- ADF tests for convergence detection
+- Hotelling's T² for seed reproducibility
+- Bayes factors for attractor existence
+- ICC for cross-run consistency
+
+## CI/CD
+
+GitHub Actions automate:
+- **ci.yml**: Linting, Julia tests, Hugo builds
+- **deploy.yml**: GitHub Pages deployment
+- **conversation.yml**: Scheduled/manual turn execution
+- **codeql.yml**: Security scanning
+- **metrics-report.yml**: Automated analysis reports
 
 ## Accessibility
 
@@ -98,15 +150,14 @@ WCAG 2.2 AAA compliance target:
 - No secrets in repository
 - Security headers configured
 - `.well-known` resources provided
+- Container runs as non-root with dropped capabilities
 
 ## Documentation
 
-See `claude.adoc` for the full specification, including:
-- Philosophical background
-- Detailed architecture
-- Game mechanics
-- Conceptor theory application
-- Expected outcomes
+- **`claude.adoc`**: Full specification (philosophy, architecture, mechanics)
+- **`papers/whitepaper.md`**: Research paper
+- **`papers/validity_framework.md`**: Statistical validity testing
+- **`docs/wiki/`**: Architecture guides, FAQ, getting started
 
 ## License
 
