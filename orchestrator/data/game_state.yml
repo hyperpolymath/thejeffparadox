@@ -1,8 +1,8 @@
 diversity_injection_counter: 0
-current_node: "beta"
-faction_slider: -2
+current_node: "alpha"
+faction_slider: 0
 pattern_quarantine: []
-turn_number: 1
+turn_number: 2
 chaos: 15
 exposure: 5
 last_diversity_turn: 0
