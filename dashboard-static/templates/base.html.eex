@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= @page.title %> | The Jeff Paradox</title>
+  <meta name="description" content="<%= @site.site_description %>">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "The Jeff Paradox Dashboard",
+    "description": "Metrics visualization for LLM diachronic identity experiment",
+    "url": "https://hyperpolymath.github.io/thejeffparadox/dashboard/",
+    "applicationCategory": "Scientific Research",
+    "operatingSystem": "Web Browser"
+  }
+  </script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="<%= @site.base_url %>assets/css/dashboard.css">
+
+  <!-- Chart.js from CDN (no npm) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <nav aria-label="Main navigation">
+      <a href="https://hyperpolymath.github.io/thejeffparadox/" class="nav-brand">The Jeff Paradox</a>
+      <ul class="nav-links">
+        <li><a href="https://hyperpolymath.github.io/thejeffparadox/turns/">Conversation</a></li>
+        <li><a href="<%= @site.base_url %>" aria-current="page">Dashboard</a></li>
+        <li><a href="https://github.com/Hyperpolymath/thejeffparadox">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <%= @inner_content %>
+  </main>
+
+  <footer class="site-footer">
+    <p>The Jeff Paradox v1.0.0 — An experiment in LLM diachronic identity</p>
+    <p><em>"The opinions and beliefs expressed do not represent anyone. They are the hallucinations of a slab of silicon."</em></p>
+  </footer>
+
+  <script src="<%= @site.base_url %>assets/js/dashboard.js" defer></script>
+</body>
+</html>

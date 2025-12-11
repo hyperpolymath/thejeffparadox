@@ -1,0 +1,344 @@
+/* The Jeff Paradox Dashboard - CSS
+   WCAG 2.2 AAA compliant (7:1 contrast)
+   No frameworks, vanilla CSS */
+
+:root {
+  /* Colors - High contrast palette */
+  --color-bg: #fefefe;
+  --color-text: #1a1a1a;
+  --color-muted: #4a4a4a;
+  --color-border: #d0d0d0;
+  --color-alpha: #1e4a7a;
+  --color-alpha-light: #e6f0fa;
+  --color-beta: #6b4410;
+  --color-beta-light: #faf5eb;
+  --color-healthy: #1a6b1a;
+  --color-warning: #8a6b00;
+  --color-critical: #8a1a1a;
+  --color-accent: #4a1a6b;
+
+  /* Typography */
+  --font-main: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 4rem;
+
+  /* Borders */
+  --radius: 4px;
+  --border: 1px solid var(--color-border);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1a1a1a;
+    --color-text: #f0f0f0;
+    --color-muted: #a0a0a0;
+    --color-border: #404040;
+    --color-alpha: #6ba3d6;
+    --color-alpha-light: #1a2a3a;
+    --color-beta: #d6a36b;
+    --color-beta-light: #3a2a1a;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Base */
+html {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+body {
+  font-family: var(--font-main);
+  color: var(--color-text);
+  background: var(--color-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Skip link for accessibility */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: var(--color-accent);
+  color: white;
+  padding: var(--space-sm) var(--space-md);
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Header */
+.site-header {
+  border-bottom: var(--border);
+  padding: var(--space-md) var(--space-lg);
+}
+
+.site-header nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.nav-brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: var(--space-lg);
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.nav-links a:hover,
+.nav-links a:focus {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Main content */
+main {
+  flex: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+  width: 100%;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+/* Status Cards */
+.status-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+}
+
+.status-card {
+  background: var(--color-bg);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+  text-align: center;
+}
+
+.status-value {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--color-text);
+}
+
+.status-label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  margin-top: var(--space-xs);
+}
+
+.status-healthy .status-value {
+  color: var(--color-healthy);
+}
+
+/* Charts */
+.chart-container {
+  background: var(--color-bg);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+  margin: var(--space-md) 0;
+}
+
+.chart-container h3 {
+  margin-bottom: var(--space-md);
+  font-size: 1rem;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--space-md);
+}
+
+.chart-container.half {
+  margin: 0;
+}
+
+/* Statistics Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-md);
+}
+
+.stat-card {
+  background: var(--color-bg);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+}
+
+.stat-card h3 {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.stat-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.stat-result .stat-value {
+  font-size: 1.5rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.stat-result .stat-interp {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.stat-result.healthy .stat-value { color: var(--color-healthy); }
+.stat-result.warning .stat-value { color: var(--color-warning); }
+.stat-result.critical .stat-value { color: var(--color-critical); }
+.stat-result.pending .stat-value { color: var(--color-muted); }
+
+/* Personality Profiles */
+.personality-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-md);
+}
+
+.personality-card {
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+}
+
+.personality-card.alpha {
+  background: var(--color-alpha-light);
+  border-color: var(--color-alpha);
+}
+
+.personality-card.beta {
+  background: var(--color-beta-light);
+  border-color: var(--color-beta);
+}
+
+.personality-card h3 {
+  margin-bottom: var(--space-md);
+}
+
+.traits {
+  list-style: none;
+  margin-bottom: var(--space-md);
+}
+
+.traits li {
+  padding: var(--space-xs) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.profile-summary {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+/* Anti-Convergence Grid */
+.ac-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+}
+
+.ac-card {
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+  text-align: center;
+}
+
+.ac-card h4 {
+  font-size: 0.875rem;
+  margin-bottom: var(--space-sm);
+}
+
+.ac-status {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.ac-card.active {
+  border-color: var(--color-healthy);
+  background: rgba(26, 107, 26, 0.05);
+}
+
+.ac-card.inactive {
+  border-color: var(--color-border);
+  opacity: 0.7;
+}
+
+/* Footer */
+.site-footer {
+  border-top: var(--border);
+  padding: var(--space-lg);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+/* Typography */
+h1 { font-size: 2rem; margin-bottom: var(--space-lg); }
+h2 { font-size: 1.5rem; margin: var(--space-lg) 0 var(--space-md); }
+h3 { font-size: 1.125rem; }
+h4 { font-size: 1rem; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  main { padding: var(--space-md); }
+  .chart-row { grid-template-columns: 1fr; }
+  .status-value { font-size: 2rem; }
+}
