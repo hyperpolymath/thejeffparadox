@@ -35,6 +35,10 @@ turn-temp temp="0.8":
 # BUILD & DEVELOPMENT
 # =============================================================================
 
+# Full project setup (dependencies + hooks)
+setup: install hooks-install
+    @echo "Setup complete! Run 'just env-check' to verify."
+
 # Install all dependencies
 install: install-julia install-ada
 
@@ -197,6 +201,23 @@ lint-markdown:
 # Check links
 check-links:
     lychee --verbose --no-progress '**/*.md' || true
+
+# =============================================================================
+# HOOKS & SETUP
+# =============================================================================
+
+# Install git hooks
+hooks-install:
+    ./scripts/setup-hooks.sh
+
+# Uninstall git hooks (use default git hooks path)
+hooks-uninstall:
+    git config --unset core.hooksPath || true
+    @echo "Git hooks disabled"
+
+# Run pre-commit checks manually
+hooks-check:
+    ./.githooks/pre-commit
 
 # =============================================================================
 # GIT & RELEASE

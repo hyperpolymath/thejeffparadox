@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+# Pre-commit hook for The Jeff Paradox
+# Runs basic quality checks before allowing commits
+
+set -e
+
+echo "Running pre-commit checks..."
+
+# Check for large files (> 1MB)
+MAX_SIZE=1048576
+for file in $(git diff --cached --name-only --diff-filter=ACM); do
+    if [ -f "$file" ]; then
+        size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo 0)
+        if [ "$size" -gt "$MAX_SIZE" ]; then
+            echo "ERROR: $file is larger than 1MB ($size bytes)"
+            exit 1
+        fi
+    fi
+done
+
+# Check for secrets (basic patterns)
+SECRETS_PATTERN='(api[_-]?key|apikey|secret|password|token|credential)[[:space:]]*[=:][[:space:]]*["\047][A-Za-z0-9+/=_-]{20,}["\047]'
+for file in $(git diff --cached --name-only --diff-filter=ACM | grep -v '\.sample$' | grep -v 'example'); do
+    if [ -f "$file" ] && grep -iE "$SECRETS_PATTERN" "$file" >/dev/null 2>&1; then
+        echo "WARNING: Possible secret detected in $file"
+        echo "Please review before committing."
+        # Don't fail, just warn - could be false positive
+    fi
+done
+
+# Check for unpinned GitHub Actions (if any .yml files changed)
+WORKFLOW_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.github/workflows/.*\.yml$' || true)
+if [ -n "$WORKFLOW_FILES" ]; then
+    for file in $WORKFLOW_FILES; do
+        if grep -E 'uses: [^@]+@v[0-9]' "$file" >/dev/null 2>&1; then
+            echo "ERROR: Unpinned action found in $file"
+            echo "All GitHub Actions must use SHA-pinned versions"
+            exit 1
+        fi
+    done
+fi
+
+# Lint shell scripts if changed
+SHELL_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.sh$' || true)
+if [ -n "$SHELL_FILES" ] && command -v shellcheck >/dev/null 2>&1; then
+    echo "Checking shell scripts..."
+    for file in $SHELL_FILES; do
+        if [ -f "$file" ]; then
+            shellcheck "$file" --severity=error || {
+                echo "ERROR: shellcheck failed for $file"
+                exit 1
+            }
+        fi
+    done
+fi
+
+# Lint YAML if changed
+YAML_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.ya?ml$' || true)
+if [ -n "$YAML_FILES" ] && command -v yamllint >/dev/null 2>&1; then
+    echo "Checking YAML files..."
+    for file in $YAML_FILES; do
+        if [ -f "$file" ]; then
+            yamllint -c .yamllint.yml "$file" >/dev/null 2>&1 || {
+                echo "WARNING: yamllint issues in $file (non-blocking)"
+            }
+        fi
+    done
+fi
+
+echo "Pre-commit checks passed!"

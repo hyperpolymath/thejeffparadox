@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Commit message hook for The Jeff Paradox
+# Validates commit message format
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Allow merge commits
+if echo "$COMMIT_MSG" | grep -qE '^Merge'; then
+    exit 0
+fi
+
+# Allow automated commits
+if echo "$COMMIT_MSG" | grep -qE '\[automated\]'; then
+    exit 0
+fi
+
+# Check for conventional commits format
+# Format: type(scope): description
+PATTERN='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9-]+\))?: .{1,72}'
+
+if ! echo "$COMMIT_MSG" | head -1 | grep -qE "$PATTERN"; then
+    echo "ERROR: Commit message does not follow conventional commits format."
+    echo ""
+    echo "Expected format: type(scope): description"
+    echo ""
+    echo "Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert"
+    echo ""
+    echo "Examples:"
+    echo "  feat(engine): add convergence detection"
+    echo "  fix(ci): correct Julia test path"
+    echo "  docs: update README installation"
+    echo ""
+    exit 1
+fi
+
+# Check for max line length (72 chars for subject)
+FIRST_LINE=$(head -1 "$COMMIT_MSG_FILE")
+if [ ${#FIRST_LINE} -gt 72 ]; then
+    echo "WARNING: First line is ${#FIRST_LINE} chars (recommended: 72 max)"
+fi
+
+exit 0
