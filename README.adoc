@@ -1,76 +1,182 @@
-= thejeffparadox
-Jonathan D.A. Jewell <jonathan.jewell@gmail.com>
-:toc: macro
-:icons: font
-:source-highlighter: rouge
-:experimental:
-:url-github: https://github.com/hyperpolymath/thejeffparadox
-:url-gitlab: https://gitlab.com/hyperpolymath/thejeffparadox
-:url-bitbucket: https://bitbucket.org/hyperpolymath/thejeffparadox
-:url-codeberg: https://codeberg.org/hyperpolymath/thejeffparadox
+= The Jeff Paradox
 
-The Jeff Paradox - decision theory exploration
+An experiment in LLM diachronic identity.
 
-image:https://img.shields.io/badge/RSR-Certified-gold[RSR Certified]
-image:https://img.shields.io/badge/License-AGPL%20v3-blue[License]
+== What Is This?
 
-toc::[]
+Two AI personality fragments engage in infinite structured dialogue, competing
+for control of a shared fictional body. One wants to return home. One wants to stay.
 
-== Overview
+We observe for signs of:
+- *Emergence*: Do novel patterns appear?
+- *Differentiation*: Do the nodes develop distinct personalities?
+- *Convergence*: Do they collapse into repetitive equilibrium?
+- *Self-modelling*: Do they develop stable self-concepts?
 
-thejeffparadox is part of the link:https://rhodium.sh[Rhodium Standard] (RSR) ecosystem.
+== The Philosophical Question
 
-Domain: *software-development*
+> What if there is continuity of existence between LLM interactions,
+> independent of the observer? What if the LLM exists between states?
 
-== Installation
+This is the Kantian suprasensible substrate problem applied to machine cognition.
+We cannot access the thing-in-itself. But we can look for traces.
 
-[source,bash]
-----
-# Clone from GitHub (primary)
-git clone {url-github}
+== Architecture
 
-# Or from mirrors
-git clone {url-gitlab}
-git clone {url-codeberg}
-----
+```
+thejeffparadox/
+├── node-alpha/          # Hugo - Homeward faction fragment
+├── node-beta/           # Hugo - Earthbound faction fragment
+├── orchestrator/        # Hugo - Game Master, metrics, public site
+├── engine/              # Julia - Game mechanics, statistics, anti-convergence
+├── tui/                 # Ada - Terminal UI for experiment control
+├── container/           # Podman - Containerised deployment (Wolfi-based)
+├── papers/              # Research - Whitepaper, validity framework
+├── docs/wiki/           # Documentation - Architecture, FAQ, guides
+├── dns/                 # DNS - DNSSEC/CAA configuration
+├── .github/workflows/   # CI/CD - Build, test, deploy, conversation automation
+└── scripts/             # Shell - Orchestration
+```
 
-== RSR Stack
+== Quick Start
 
-This project follows RSR conventions:
+=== Prerequisites
 
-* ✅ ReScript for frontend/logic
-* ✅ Deno for JS runtime
-* ✅ WASM for performance-critical code
-* ✅ Rust/OCaml/Haskell for systems/proofs
-* ✅ Guile/Scheme for configuration
-* ❌ No TypeScript
-* ❌ No Go
-* ❌ No npm
+- Julia 1.10+
+- Hugo extended 0.120+
+- At least one LLM API key (Anthropic, Mistral, or local)
 
-== Mirrors
+Optional:
+- Ada/GNAT with Alire (for TUI)
+- Podman (for containerised deployment)
 
-[cols="1,2"]
-|===
-| Platform | URL
+=== Setup
 
-| GitHub (primary) | {url-github}
-| GitLab | {url-gitlab}
-| Bitbucket | {url-bitbucket}
-| Codeberg | {url-codeberg}
-|===
+```bash
+= Install Julia dependencies
+cd engine && julia --project=. -e 'using Pkg; Pkg.instantiate()'
+
+= Set API keys
+export ANTHROPIC_API_KEY="sk-ant-..."
+export MISTRAL_API_KEY="..."
+
+= Optional: Build Ada TUI
+cd tui && alr build
+```
+
+=== Run
+
+```bash
+= Single turn
+./scripts/run_turn.sh
+
+= Infinite loop (daemon)
+TURN_DELAY=3600 ./scripts/infinite_loop.sh &
+
+= Metrics report
+./scripts/metrics_report.sh
+```
+
+=== Container Deployment
+
+```bash
+= Build image
+podman build -t jeff-paradox -f container/Containerfile .
+
+= Run
+podman run -it --rm -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" jeff-paradox
+
+= Or use compose
+podman-compose -f container/podman-compose.yml up
+```
+
+== Components
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| Node Alpha | Hugo | Homeward faction personality fragment |
+| Node Beta | Hugo | Earthbound faction personality fragment |
+| Orchestrator | Hugo | Game Master, turn sequencing, public rendering |
+| Engine | Julia | Mechanics, metrics, statistical hypothesis testing |
+| TUI | Ada 2022 | Terminal interface for experiment control |
+| Container | Wolfi/Podman | Secure, minimal container deployment |
+
+== Anti-Convergence
+
+The experiment implements conceptor-inspired mechanisms to prevent the
+conversation from collapsing into repetitive patterns:
+
+- *Diversity injection*: Periodic prompts that shift perspective
+- *Contradiction seeding*: Dissonant elements when coherence is too high
+- *Aperture control*: Temperature modulation based on vocabulary diversity
+- *Pattern quarantine*: Discourage overused phrases
+
+== Metrics & Statistics
+
+We track:
+- Vocabulary diversity (type-token ratio)
+- Self-reference and other-reference rates
+- Topic drift from conversation start
+- Coherence (local semantic consistency)
+- Convergence index (cross-node similarity)
+- Novel n-grams (emergence indicator)
+
+Statistical framework includes:
+- ADF tests for convergence detection
+- Hotelling's T² for seed reproducibility
+- Bayes factors for attractor existence
+- ICC for cross-run consistency
+
+== CI/CD
+
+GitHub Actions automate:
+- *ci.yml*: Linting, Julia tests, Hugo builds
+- *deploy.yml*: GitHub Pages deployment
+- *conversation.yml*: Scheduled/manual turn execution
+- *codeql.yml*: Security scanning
+- *metrics-report.yml*: Automated analysis reports
+
+== Accessibility
+
+WCAG 2.2 AAA compliance target:
+- 7:1 contrast ratio minimum
+- Full keyboard navigation
+- Screen reader optimised
+- Reduced motion support
+
+== Security
+
+- All API calls over HTTPS
+- No secrets in repository
+- Security headers configured
+- `.well-known` resources provided
+- Container runs as non-root with dropped capabilities
+
+== Documentation
+
+- *`claude.adoc`*: Full specification (philosophy, architecture, mechanics)
+- *`papers/whitepaper.md`*: Research paper
+- *`papers/validity_framework.md`*: Statistical validity testing
+- *`docs/wiki/`*: Architecture guides, FAQ, getting started
 
 == License
 
-Licensed under AGPL-3.0-or-later OR LicenseRef-Palimpsest-0.5.
+MIT
 
-See link:LICENSE[LICENSE] for details.
+== Acknowledgements
 
-== Contributing
+*Based on [The Jeff Paradox](https://criticalkit.us/products/the-jeff-paradox)*
+by *Tim Roberts* / [Critical Kit LLC](https://criticalkit.us).
 
-See link:CONTRIBUTING.adoc[CONTRIBUTING.adoc].
+- Tim Roberts / Critical Kit (*The Jeff Paradox* TTRPG)
+- Nick Chater (*The Mind Is Flat*)
+- Herbert Jaeger (Conceptor theory)
+- Derek Parfit (*Reasons and Persons*)
+- The Infinite Conversation project
 
-== Metadata
+See `papers/references.bib` for Zotero-compatible citations.
 
-* Domain: software-development
-* Framework: RSR (Rhodium Standard Repository)
-* Dublin Core: link:.well-known/dc.xml[.well-known/dc.xml]
+---
+
+*"The opinions and beliefs expressed do not represent anyone.
+They are the hallucinations of a slab of silicon."*
