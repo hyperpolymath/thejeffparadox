@@ -28,10 +28,14 @@
       (values . ("reproducibility" "philosophical-rigor" "open-science" "minimal-dependencies"))))
 
     (session
-     (conversation-id . "2025-12-08-STATE-REVIEW")
-     (started-at . "2025-12-08T00:00:00Z")
+     (conversation-id . "2025-12-13-OpenSSF-Scorecard")
+     (started-at . "2025-12-13T00:00:00Z")
      (experiment-turn . 15)
-     (experiment-status . "running"))
+     (experiment-status . "running")
+     (completed-this-session
+      ((task . "OpenSSF Scorecard workflow fixes")
+       (files . 19)
+       (fixes . ("permissions: read-all" "SHA-pinned actions" "SPDX headers")))))
 
     ;;; ==================================================
     ;;; CURRENT POSITION
