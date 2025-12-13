@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # Deploy to GitHub Pages
 # Builds and deploys all three Hugo sites when main is updated
 # RSR Compliant: All actions SHA-pinned
@@ -27,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af68 # v4.2.23 # v4.2.2
         with:
           submodules: recursive
           fetch-depth: 0

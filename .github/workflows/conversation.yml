@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # The Jeff Paradox - Automated Conversation
 # This workflow runs the infinite conversation automatically
 # RSR Compliant: All actions SHA-pinned
@@ -39,6 +40,9 @@ env:
   JULIA_VERSION: "1.10"
   HUGO_VERSION: "0.121.0"
 
+
+permissions: read-all
+
 jobs:
   conversation-turn:
     name: Execute Turn
@@ -52,7 +56,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af68 # v4.2.23 # v4.2.2
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
