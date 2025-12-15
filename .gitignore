@@ -1,64 +1,79 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# RSR-compliant .gitignore
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Build
+/target/
+/_build/
+/build/
+/dist/
+/out/
+
 # Dependencies
-node_modules/
-vendor/
-.bundle/
-.deno/
+/node_modules/
+/vendor/
+/deps/
+/.elixir_ls/
 
-# Ada/GNAT build artifacts
-tui/obj/
-tui/bin/
-*.ali
-*.o
+# Rust
+# Cargo.lock  # Keep for binaries
 
-# Build outputs
-_site/
-public/
-resources/
-
-# Jekyll
-.jekyll-cache/
-.jekyll-metadata
-.sass-cache/
-
-# Hugo
-/orchestrator/public/
+# Elixir
+/cover/
+/doc/
+*.ez
+erl_crash.dump
 
 # Julia
 *.jl.cov
 *.jl.mem
-Manifest.toml
+/Manifest.toml
+
+# ReScript
+/lib/bs/
+/.bsb.lock
+
+# Python (SaltStack only)
+__pycache__/
+*.py[cod]
+.venv/
+
+# Ada/SPARK
+*.ali
+/obj/
+/bin/
+
+# Haskell
+/.stack-work/
+/dist-newstyle/
+
+# Chapel
+*.chpl.tmp.*
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+secrets/
+
+# Test/Coverage
+/coverage/
+htmlcov/
 
 # Logs
-logs/
 *.log
+/logs/
 
-# Runtime
-.jeff_paradox.pid
-
-# Environment
-.env
-.env.local
-.env.*.local
-container/.env
-
-# Container build cache
-*.tar
-*.oci
-
-# API keys (NEVER commit these)
-**/secrets/
-**/*.key
-**/*.pem
-
-# Editor
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# Temporary
-tmp/
-temp/
+# Temp
+/tmp/
 *.tmp
+*.bak
