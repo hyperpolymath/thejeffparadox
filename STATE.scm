@@ -12,10 +12,10 @@
 ;;;============================================================================
 
 (define metadata
-  '((version . "0.1.0")
+  '((version . "0.1.1")
     (schema-version . "1.0")
     (created . "2025-12-15")
-    (updated . "2025-12-15")
+    (updated . "2025-12-17")
     (project . "thejeffparadox")
     (repo . "github.com/hyperpolymath/thejeffparadox")))
 
@@ -26,14 +26,14 @@
 (define project-context
   '((name . "thejeffparadox")
     (tagline . "An experiment in LLM diachronic identity.")
-    (version . "0.1.0")
+    (version . "0.1.1")
     (license . "AGPL-3.0-or-later")
     (rsr-compliance . "gold-target")
 
     (tech-stack
-     ((primary . "See repository languages")
+     ((primary . "Julia (engine), Ada/SPARK (TUI), Hugo (sites)")
       (ci-cd . "GitHub Actions + GitLab CI + Bitbucket Pipelines")
-      (security . "CodeQL + OSSF Scorecard")))))
+      (security . "Trivy + TruffleHog + OSSF Scorecard + ShellCheck")))))
 
 ;;;============================================================================
 ;;; CURRENT POSITION
@@ -41,18 +41,23 @@
 
 (define current-position
   '((phase . "v0.1 - Initial Setup and RSR Compliance")
-    (overall-completion . 25)
+    (overall-completion . 30)
 
     (components
      ((rsr-compliance
        ((status . "complete")
         (completion . 100)
-        (notes . "SHA-pinned actions, SPDX headers, multi-platform CI")))
+        (notes . "SHA-pinned actions (v4.2.2), SPDX headers, multi-platform CI")))
+
+      (security
+       ((status . "hardened")
+        (completion . 90)
+        (notes . "Consistent SHA pins, updated TruffleHog v3.91.1, security contacts configured")))
 
       (documentation
        ((status . "foundation")
-        (completion . 30)
-        (notes . "README exists, META/ECOSYSTEM/STATE.scm added")))
+        (completion . 35)
+        (notes . "README exists, META/ECOSYSTEM/STATE.scm maintained, SECURITY.md updated")))
 
       (testing
        ((status . "minimal")
@@ -68,7 +73,10 @@
      ("RSR-compliant CI/CD pipeline"
       "Multi-platform mirroring (GitHub, GitLab, Bitbucket)"
       "SPDX license headers on all files"
-      "SHA-pinned GitHub Actions"))))
+      "Consistent SHA-pinned GitHub Actions (checkout@v4.2.2)"
+      "Security scanning (Trivy, TruffleHog v3.91.1, ShellCheck)"
+      "RFC 9116 security.txt compliance"
+      "OSSF Scorecard integration"))))
 
 ;;;============================================================================
 ;;; ROUTE TO MVP
@@ -151,13 +159,26 @@
 
 (define session-history
   '((snapshots
-     ((date . "2025-12-15")
-      (session . "initial-state-creation")
-      (accomplishments
-       ("Added META.scm, ECOSYSTEM.scm, STATE.scm"
-        "Established RSR compliance"
-        "Created initial project checkpoint"))
-      (notes . "First STATE.scm checkpoint created via automated script")))))
+     (((date . "2025-12-17")
+       (session . "security-review-and-hardening")
+       (accomplishments
+        ("Updated all checkout actions to v4.2.2 for consistency"
+         "Updated TruffleHog to v3.91.1 across all workflows"
+         "Fixed inconsistent SHA pins in GitHub Actions"
+         "Updated SECURITY.md with correct email contacts"
+         "Synchronized SECURITY.md SHA table with actual workflow usage"
+         "Added missing actions to SECURITY.md documentation"
+         "Updated stale action to v9.1.0"
+         "Updated create-pull-request action to v7.0.9"))
+       (notes . "Comprehensive security hardening of CI/CD pipeline"))
+
+      ((date . "2025-12-15")
+       (session . "initial-state-creation")
+       (accomplishments
+        ("Added META.scm, ECOSYSTEM.scm, STATE.scm"
+         "Established RSR compliance"
+         "Created initial project checkpoint"))
+       (notes . "First STATE.scm checkpoint created via automated script"))))))
 
 ;;;============================================================================
 ;;; HELPER FUNCTIONS (for Guile evaluation)
@@ -184,11 +205,12 @@
 
 (define state-summary
   '((project . "thejeffparadox")
-    (version . "0.1.0")
-    (overall-completion . 25)
+    (version . "0.1.1")
+    (overall-completion . 30)
     (next-milestone . "v0.2 - Core Functionality")
     (critical-blockers . 0)
     (high-priority-issues . 0)
-    (updated . "2025-12-15")))
+    (security-status . "hardened")
+    (updated . "2025-12-17")))
 
 ;;; End of STATE.scm

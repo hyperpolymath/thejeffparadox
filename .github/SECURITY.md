@@ -23,7 +23,7 @@ Instead, please report security vulnerabilities through one of these channels:
    - Fill out the form with details
 
 2. **Email**:
-   - Send details to: security@example.com
+   - Send details to: security@metadatastician.art
    - Use our PGP key (see below) for sensitive information
    - Include "SECURITY" in the subject line
 
@@ -177,7 +177,7 @@ Mitigations:
 
 ## Security Contacts
 
-- **Primary**: security@example.com
+- **Primary**: security@metadatastician.art
 - **Backup**: [GitHub Security Advisories](https://github.com/Hyperpolymath/thejeffparadox/security)
 
 ## Acknowledgments
