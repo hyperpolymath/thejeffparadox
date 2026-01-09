@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MPL-2.0
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # Continuous Integration
 # Runs on all pushes and PRs to main
 # RSR Compliant: SHA-pinned actions, no npm (using Deno)
