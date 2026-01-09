@@ -169,8 +169,35 @@ using JeffEngine
         end
 
         @testset "aperture control" begin
-            # Basic bounds check
-            @test 0.6 <= 0.8 <= 1.2  # Placeholder
+            # Create mock game state with config
+            mock_config = Dict{String,Any}(
+                "min_temperature" => 0.6,
+                "max_temperature" => 1.2
+            )
+            mock_game = JeffEngine.GameState(
+                0, 0, 0,    # chaos, exposure, faction_slider
+                1, :alpha,   # turn_number, current_node
+                [],          # turn_history
+                [], 0, 0,    # quarantine, diversity counters
+                [],          # metrics_history (empty)
+                mock_config
+            )
+
+            # With empty metrics, should return base temperature unchanged
+            result = JeffEngine.compute_aperture(mock_game, 0.8)
+            @test result == 0.8
+
+            # Add metrics with low vocabulary diversity
+            push!(mock_game.metrics_history, Dict{String,Any}(
+                "vocabulary_diversity" => 0.25,
+                "coherence_score" => 0.7
+            ))
+            result = JeffEngine.compute_aperture(mock_game, 0.8)
+            @test result == 0.9  # Increased due to low diversity
+
+            # Test bounds clamping
+            result = JeffEngine.compute_aperture(mock_game, 1.15)
+            @test result <= 1.2  # Should clamp to max
         end
     end
 
