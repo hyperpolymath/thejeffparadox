@@ -43,9 +43,7 @@ jobs:
           if [ -f "Cargo.toml" ]; then
             cargo install cargo-audit && cargo audit || true
           fi
-          if [ -f "requirements.txt" ]; then
-            pip install safety && safety check -r requirements.txt || true
-          fi
+          # Note: Python is banned per RSR - use Julia/Rust/ReScript instead
       - name: SAST scan
         uses: returntocorp/semgrep-action@713efdd345f3b9c89a9cf549853899f828e79666
         continue-on-error: true
@@ -65,7 +63,10 @@ jobs:
           fi
       - name: Validate JSON/YAML schemas
         run: |
-          find . -name "*.json" -exec python3 -m json.tool {} \; 2>/dev/null | head -5 || true
+          # Using jq instead of python3 (Python banned per RSR)
+          for f in $(find . -name "*.json" 2>/dev/null | head -5); do
+            jq empty "$f" 2>/dev/null || echo "Invalid JSON: $f"
+          done || true
 
   # VALIDATION - Input/output validation
   validation:
@@ -191,5 +192,6 @@ jobs:
           echo "Documentation:$DOCS"
       - name: Check code comments
         run: |
-          COMMENTS=$(grep -rE "^[[:space:]]*(//|#|/\*)" --include="*.rs" --include="*.res" --include="*.py" . 2>/dev/null | wc -l || echo "0")
+          # Check allowed languages per RSR (Rust, ReScript, Julia, Gleam)
+          COMMENTS=$(grep -rE "^[[:space:]]*(//|#|/\*)" --include="*.rs" --include="*.res" --include="*.jl" --include="*.gleam" . 2>/dev/null | wc -l || echo "0")
           echo "Comment lines: $COMMENTS"
