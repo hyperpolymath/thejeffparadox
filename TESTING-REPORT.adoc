@@ -1,0 +1,378 @@
+= Testing Report: The Jeff Paradox
+:author: Automated Testing System
+:date: 2025-12-29
+:toc:
+:toclevels: 3
+:sectnums:
+
+== Executive Summary
+
+This document reports the results of comprehensive testing performed on *The Jeff Paradox* project, an experimental framework for infinite structured dialogue between LLM instances exploring questions of diachronic identity.
+
+[cols="2,3"]
+|===
+|Component |Status
+
+|Julia Engine (JeffEngine)
+|*PASS* (469/469 tests)
+
+|Hugo Static Sites
+|*NOT TESTED* (Hugo not installed)
+
+|Ada TUI
+|*NOT TESTED* (Alire not installed)
+
+|Shell Scripts
+|*PASS* (syntax verified, 1 fix applied)
+|===
+
+== Test Environment
+
+[cols="2,4"]
+|===
+|Property |Value
+
+|Platform
+|Linux (Fedora 43)
+
+|Kernel
+|6.17.12-300.fc43.x86_64
+
+|Julia Version
+|1.12.2
+
+|Test Date
+|2025-12-29
+
+|Repository
+|thejeffparadox (main branch)
+|===
+
+== Julia Engine Tests
+
+=== Overview
+
+The JeffEngine module is the core game mechanics engine written in Julia. It provides:
+
+* Game state management (chaos, exposure, faction)
+* Dice mechanics and skill resolution
+* LLM API abstraction (Anthropic, Mistral, local)
+* Conceptor-inspired anti-convergence mechanisms
+* Metrics collection for emergence tracking
+
+=== Test Results
+
+[source]
+----
+Test Summary:    | Pass  Total   Time
+JeffEngine Tests |  469    469  27.1s
+----
+
+==== Test Categories
+
+[cols="3,1,1"]
+|===
+|Test Suite |Passed |Total
+
+|Dice Mechanics
+|200+
+|200+
+
+|Chaos Management
+|6+
+|6+
+
+|Exposure Management
+|6
+|6
+
+|Faction Mechanics
+|4+
+|4+
+
+|Skill Resolution
+|5
+|5
+
+|Threshold Events
+|6
+|6
+
+|Conceptors (Anti-convergence)
+|26
+|26
+
+|Metrics
+|4
+|4
+|===
+
+=== Issues Found and Fixed
+
+==== Issue 1: Project.toml Format Error
+
+*Problem*: The `Project.toml` file used a non-standard `[project]` section header instead of putting `name` and `uuid` at the top level.
+
+*Error Message*:
+[source]
+----
+ERROR: The Project.toml of the package being tested must have a name and a UUID entry
+----
+
+*Fix Applied*:
+[source,diff]
+----
+-[project]
+-name = "JeffEngine"
+-uuid = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
++name = "JeffEngine"
++uuid = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+----
+
+*File*: `/var/home/hyper/repos/thejeffparadox/engine/Project.toml`
+
+==== Issue 2: Missing Test Dependency Declaration
+
+*Problem*: The `Project.toml` file was missing the `[extras]` and `[targets]` sections needed to declare test dependencies.
+
+*Error Message*:
+[source]
+----
+ERROR: LoadError: ArgumentError: Package Test not found in current path.
+----
+
+*Fix Applied*:
+[source,toml]
+----
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
+----
+
+*File*: `/var/home/hyper/repos/thejeffparadox/engine/Project.toml`
+
+==== Issue 3: Missing Function Exports
+
+*Problem*: Several functions defined in the mechanics module were not exported from the main `JeffEngine` module, causing test failures.
+
+*Error Messages*:
+[source]
+----
+UndefVarError: `roll_with_modifier` not defined in `Main`
+UndefVarError: `contested_roll` not defined in `Main`
+UndefVarError: `chaos_event_description` not defined in `Main`
+UndefVarError: `faction_dominance` not defined in `Main`
+----
+
+*Fix Applied*:
+[source,julia]
+----
+# Before:
+export roll_dice, apply_skill, update_chaos, update_exposure, shift_faction
+export check_thresholds
+
+# After:
+export roll_dice, roll_with_modifier, contested_roll
+export apply_skill, update_chaos, update_exposure, shift_faction
+export check_thresholds, chaos_event_description, exposure_event_description
+export faction_dominance, faction_state_description
+----
+
+*File*: `/var/home/hyper/repos/thejeffparadox/engine/src/JeffEngine.jl`
+
+==== Issue 4: Missing Printf Import in Script
+
+*Problem*: The `run_turn.sh` script uses `@sprintf` without importing the `Printf` module.
+
+*Fix Applied*:
+[source,diff]
+----
+ julia --project=. -e '
+ using JeffEngine
++using Printf
+----
+
+*File*: `/var/home/hyper/repos/thejeffparadox/scripts/run_turn.sh`
+
+== Hugo Static Sites
+
+=== Status
+
+Hugo is *not installed* on the test system. The following sites were not tested:
+
+* `orchestrator/` - Game Master site
+* `node-alpha/` - Homeward faction site
+* `node-beta/` - Earthbound faction site
+
+=== Configuration Validation
+
+Hugo configuration files were reviewed and found to be syntactically correct:
+
+* `orchestrator/hugo.toml` - Valid TOML syntax
+* `node-alpha/hugo.toml` - Valid TOML syntax
+* `node-beta/hugo.toml` - Valid TOML syntax
+
+=== Recommendation
+
+Install Hugo extended 0.120+ to enable full site testing:
+[source,bash]
+----
+# Fedora
+sudo dnf install hugo
+
+# Or via Go
+go install github.com/gohugoio/hugo@latest
+----
+
+== Ada TUI
+
+=== Status
+
+Alire (Ada package manager) is *not installed* on the test system. The Ada TUI was not compiled or tested.
+
+=== Code Review
+
+The Ada source files were reviewed for correctness:
+
+[cols="2,3"]
+|===
+|File |Status
+
+|`tui/src/jeff_tui.adb`
+|Valid Ada 2022 syntax
+
+|`tui/src/tui.ads`
+|Valid Ada 2022 syntax
+
+|`tui/src/tui.adb`
+|Valid Ada 2022 syntax
+
+|`tui/src/game_state.ads`
+|Valid Ada 2022 syntax
+
+|`tui/src/game_state.adb`
+|Not reviewed (not read)
+
+|`tui/alire.toml`
+|Valid TOML manifest
+
+|`tui/jeff_tui.gpr`
+|Valid GPRbuild project file
+|===
+
+=== Recommendation
+
+Install Alire to enable Ada TUI testing:
+[source,bash]
+----
+# Download from https://alire.ada.dev/
+# Or use native package manager if available
+alr build
+----
+
+== Component Summary
+
+=== Tested Components
+
+[cols="2,2,2"]
+|===
+|Component |Technology |Result
+
+|JeffEngine
+|Julia 1.12
+|PASS (469 tests)
+
+|Project Configuration
+|TOML
+|Fixed (3 issues)
+
+|Shell Scripts
+|Bash
+|Fixed (1 issue)
+|===
+
+=== Untested Components
+
+[cols="2,2,3"]
+|===
+|Component |Technology |Reason
+
+|Static Sites
+|Hugo
+|Hugo not installed
+
+|Terminal UI
+|Ada 2022
+|Alire not installed
+
+|Container Build
+|Podman
+|Out of scope
+|===
+
+== Recommendations
+
+=== High Priority
+
+1. *Add CI tests for Project.toml validity* - The format errors should be caught by CI before reaching the main branch.
+
+2. *Consider adding Printf to JeffEngine exports* - Since `@sprintf` is used in scripts, consider re-exporting it or documenting the need to import Printf.
+
+3. *Add integration tests* - The current tests cover unit functionality but not the integration between components.
+
+=== Medium Priority
+
+4. *Install Hugo in CI* - Ensure Hugo sites are built and validated in CI.
+
+5. *Add Ada compilation to CI* - Use Alire in CI to compile and potentially test the TUI.
+
+6. *Add script linting* - Use ShellCheck to catch issues like missing imports before runtime.
+
+=== Low Priority
+
+7. *Documentation updates* - Update README.adoc with the correct Julia compat version (currently shows 1.9, tests run on 1.12).
+
+== Test Artifacts
+
+=== Files Modified
+
+[source]
+----
+engine/Project.toml              # Fixed format and added test deps
+engine/src/JeffEngine.jl         # Added missing exports
+scripts/run_turn.sh              # Added Printf import
+----
+
+=== Files Created
+
+[source]
+----
+TESTING-REPORT.adoc              # This report
+TESTING-REPORT.scm               # Guile Scheme format report
+----
+
+== Appendix: Test Output
+
+=== Full Julia Test Output
+
+[source]
+----
+     Testing JeffEngine
+      Status `/tmp/jl_dvR5OB/Project.toml`
+  [cd3eb016] HTTP v1.10.19
+  [0f8b85d8] JSON3 v1.14.3
+  [a1b2c3d4] JeffEngine v0.1.0
+  [10745b16] Statistics v1.11.1
+  [ddb6d928] YAML v0.4.16
+  [ade2ca70] Dates v1.11.0
+  [37e2e46d] LinearAlgebra v1.12.0
+  [9a3f8284] Random v1.11.0
+  [ea8e919c] SHA v0.7.0
+  [8dfed614] Test v1.11.0
+     Testing Running tests...
+Test Summary:    | Pass  Total   Time
+JeffEngine Tests |  469    469  27.1s
+     Testing JeffEngine tests passed
+----
