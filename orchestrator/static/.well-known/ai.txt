@@ -1,0 +1,5 @@
+# AI Disclosure
+AI-Generated: yes
+AI-Systems: Claude, Mistral
+AI-Purpose: research, philosophical-experiment
+Hallucination-Risk: high

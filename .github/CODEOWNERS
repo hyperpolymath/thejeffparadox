@@ -1,0 +1,31 @@
+# CODEOWNERS - Define who reviews what
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything
+* @Hyperpolymath
+
+# Julia engine - core mechanics
+/engine/ @Hyperpolymath
+
+# Hugo orchestrator
+/orchestrator/ @Hyperpolymath
+
+# Node configurations (both use Hugo now)
+/node-alpha/ @Hyperpolymath
+/node-beta/ @Hyperpolymath
+
+# Documentation
+/docs/ @Hyperpolymath
+*.md @Hyperpolymath
+*.adoc @Hyperpolymath
+
+# CI/CD and GitHub configuration
+/.github/ @Hyperpolymath
+
+# Security-sensitive files
+/.well-known/ @Hyperpolymath
+/SECURITY.md @Hyperpolymath
+/.github/SECURITY.md @Hyperpolymath
+
+# Shell scripts
+/scripts/ @Hyperpolymath

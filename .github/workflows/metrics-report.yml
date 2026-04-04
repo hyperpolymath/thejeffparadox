@@ -1,0 +1,66 @@
+# SPDX-License-Identifier: MPL-2.0-or-later
+# Metrics Report
+# Generates periodic metrics reports for the conversation
+# RSR Compliant: SHA-pinned
+
+name: Metrics Report
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+
+permissions: read-all
+
+jobs:
+  report:
+    name: Generate Report
+    runs-on: ubuntu-latest
+
+    if: ${{ vars.CONVERSATION_ENABLED == 'true' }}
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@9b79636afcfb07ab02c256cede01fe2db6ba808c # v2.6.0
+        with:
+          version: "1.10"
+
+      - name: Cache Julia packages
+        uses: julia-actions/cache@d10a6fd8f31b12404a54613ebad242900567f2b9 # v2.1.0
+
+      - name: Generate metrics report
+        run: |
+          cd engine
+          julia scripts/generate_report.jl
+        continue-on-error: true
+
+      - name: Commit report
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add docs/reports/ 2>/dev/null || true
+          git diff --staged --quiet || git commit -m "docs: daily metrics report [automated]"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # v1.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
+      - name: Create summary
+        run: |
+          echo "## Daily Metrics Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f "docs/reports/daily-$(date +%Y-%m-%d).md" ]; then
+            cat "docs/reports/daily-$(date +%Y-%m-%d).md" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Report not generated (no game state)" >> $GITHUB_STEP_SUMMARY
+          fi

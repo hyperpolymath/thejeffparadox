@@ -1,0 +1,121 @@
+# The Jeff Paradox - Podman Compose Configuration
+# RSR Compliant: Wolfi-based containers
+#
+# Run: podman-compose up -d
+# Logs: podman-compose logs -f
+
+version: "3.9"
+
+services:
+  # ===========================================================================
+  # Orchestrator Service
+  # ===========================================================================
+  orchestrator:
+    build:
+      context: ..
+      dockerfile: container/Containerfile
+      target: runtime
+    container_name: jeff-orchestrator
+    image: jeff-paradox:latest
+
+    # Security settings (RSR compliant)
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+
+    # Volumes
+    volumes:
+      - type: bind
+        source: ../orchestrator/data
+        target: /app/data
+        read_only: false
+      - type: tmpfs
+        target: /tmp
+        tmpfs:
+          size: 100M
+
+    # Environment
+    environment:
+      - JULIA_NUM_THREADS=2
+      - TZ=UTC
+
+    # Secrets (via environment file)
+    env_file:
+      - .env
+
+    # Network
+    networks:
+      - jeff-network
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "julia", "-e", "println(\"ok\")"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+    restart: unless-stopped
+
+  # ===========================================================================
+  # Static Site Server (optional, for local preview)
+  # ===========================================================================
+  site-server:
+    image: cgr.dev/chainguard/nginx:latest
+    container_name: jeff-site
+
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+
+    volumes:
+      - type: bind
+        source: ../orchestrator/public
+        target: /usr/share/nginx/html
+        read_only: true
+      - type: tmpfs
+        target: /var/cache/nginx
+      - type: tmpfs
+        target: /var/run
+
+    ports:
+      - "8080:8080"
+
+    networks:
+      - jeff-network
+
+    depends_on:
+      - orchestrator
+
+    restart: unless-stopped
+
+networks:
+  jeff-network:
+    driver: bridge
+
+# ===========================================================================
+# Security Notes (RSR Compliance)
+# ===========================================================================
+# - All images are Wolfi/Chainguard based (minimal, hardened)
+# - Containers run as non-root
+# - Capabilities dropped (no-new-privileges)
+# - Read-only root filesystem where possible
+# - Resource limits enforced
+# - No host network access
+# - Secrets via environment file (never in image)

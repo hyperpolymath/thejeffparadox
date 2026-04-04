@@ -1,0 +1,45 @@
+title: "[Idea] "
+labels:
+  - idea
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Share Your Idea
+
+        Got an idea for improving The Jeff Paradox? Share it here!
+
+        For fully-formed feature requests, please use the issue tracker.
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your Idea
+      description: Describe your idea
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why would this be useful?
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Anti-convergence
+        - Metrics
+        - Visualisation
+        - Documentation
+        - CI/CD
+        - Philosophy
+        - Other
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Have you considered any alternatives?

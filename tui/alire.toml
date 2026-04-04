@@ -1,0 +1,29 @@
+# Alire manifest for The Jeff Paradox TUI
+# Ada package management - https://alire.ada.dev/
+
+[general]
+name = "jeff_tui"
+description = "Terminal UI for The Jeff Paradox experiment control"
+version = "0.1.0"
+authors = ["The Jeff Paradox Contributors"]
+maintainers = ["thejeffparadox@example.com"]
+maintainers-logins = ["hyperpolymath"]
+licenses = "MIT"
+website = "https://github.com/Hyperpolymath/thejeffparadox"
+tags = ["tui", "llm", "experiment", "philosophy"]
+
+[[depends-on]]
+gnatcoll = "^24"
+
+[[depends-on]]
+adasockets = "^1"
+
+[gpr-externals]
+BUILD_MODE = ["debug", "release"]
+
+[gpr-set-externals]
+BUILD_MODE = "debug"
+
+[build-switches]
+"*".style_checks = "yes"
+"*".ada_version = "Ada_2022"

@@ -1,0 +1,47 @@
+# SPDX-License-Identifier: MPL-2.0-or-later
+# Welcome new contributors
+# RSR Compliant: SHA-pinned
+
+name: Greetings
+
+on:
+  pull_request_target:
+    types: [opened]
+  issues:
+    types: [opened]
+
+
+permissions: read-all
+
+jobs:
+  greeting:
+    name: Welcome
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Greet new contributors
+        uses: actions/first-interaction@1c4688942c71f71d4f5502a26ea67c331730fa4d # v3.1.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            Welcome to The Jeff Paradox! Thank you for opening your first issue.
+
+            This project explores LLM diachronic identity through infinite adversarial dialogue.
+            Please ensure your issue includes:
+            - Clear description of the problem or feature request
+            - Relevant context (turn numbers, metrics, etc.)
+            - Expected vs actual behaviour
+
+            A maintainer will review your issue soon.
+
+          pr-message: |
+            Welcome to The Jeff Paradox! Thank you for your first pull request.
+
+            Before we can merge:
+            - Ensure CI passes (all workflows green)
+            - Follow the code style (SHA-pinned actions, no npm)
+            - Update relevant documentation
+
+            A maintainer will review your PR soon. Thank you for contributing!

@@ -1,0 +1,131 @@
+# Hugo Configuration - The Jeff Paradox Orchestrator
+# This is the Game Master site that coordinates the experiment
+
+baseURL = "https://thejeffparadox.example.com"
+languageCode = "en-GB"
+title = "The Jeff Paradox"
+# No theme - using custom layouts
+
+# Build settings
+enableRobotsTXT = true
+enableGitInfo = true
+disableKinds = ["taxonomy", "term"]
+
+[params]
+  description = "An experiment in LLM diachronic identity"
+  author = "The Jeff Paradox Collaboration"
+
+  [params.game]
+    # Turn timing
+    turn_delay_seconds = 3600
+    max_turns_per_day = 24
+
+    # Context limits
+    max_context_tokens = 100000
+    summary_threshold_tokens = 80000
+
+    # Starting values
+    initial_chaos = 15
+    initial_exposure = 5
+    initial_faction = 0
+
+  [params.conceptors]
+    # Anti-convergence settings
+    diversity_injection_frequency = 10
+    contradiction_threshold = 0.85
+    min_temperature = 0.6
+    max_temperature = 1.2
+    quarantine_threshold = 5
+    quarantine_window = 20
+
+  [params.metrics]
+    # Metrics collection
+    checkpoint_interval = 100
+    vocabulary_window = 50
+    convergence_window = 20
+
+  [params.nodes]
+    [params.nodes.alpha]
+      name = "Alpha"
+      faction = "homeward"
+      color = "#2c5282"
+
+    [params.nodes.beta]
+      name = "Beta"
+      faction = "earthbound"
+      color = "#744210"
+
+# Security headers (for Hugo server and deployment configs)
+[server]
+  [[server.headers]]
+    for = "/**"
+    [server.headers.values]
+      Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+      X-Content-Type-Options = "nosniff"
+      X-Frame-Options = "DENY"
+      X-XSS-Protection = "0"
+      Referrer-Policy = "strict-origin-when-cross-origin"
+      Permissions-Policy = "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+      Cross-Origin-Opener-Policy = "same-origin"
+      Cross-Origin-Resource-Policy = "same-origin"
+      Cross-Origin-Embedder-Policy = "require-corp"
+
+  [[server.headers]]
+    for = "/.well-known/**"
+    [server.headers.values]
+      Content-Type = "text/plain; charset=utf-8"
+
+# Markup settings
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = false
+    [markup.goldmark.extensions]
+      footnote = true
+      strikethrough = true
+      table = true
+      taskList = true
+
+  [markup.highlight]
+    style = "monokai"
+    lineNos = true
+    lineNumbersInTable = true
+
+# Output formats
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+  section = ["HTML", "RSS"]
+  page = ["HTML"]
+
+[outputFormats]
+  [outputFormats.JSON]
+    mediaType = "application/json"
+    baseName = "index"
+
+# Menu
+[menu]
+  [[menu.main]]
+    name = "Conversation"
+    url = "/turns/"
+    weight = 1
+  [[menu.main]]
+    name = "Metrics"
+    url = "/metrics/"
+    weight = 2
+  [[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 3
+  [[menu.main]]
+    name = "Node Alpha"
+    url = "/node-alpha/"
+    weight = 4
+  [[menu.main]]
+    name = "Node Beta"
+    url = "/node-beta/"
+    weight = 5
+
+# Sitemap
+[sitemap]
+  changefreq = "daily"
+  priority = 0.5

@@ -1,0 +1,33 @@
+# EditorConfig - https://editorconfig.org
+# RSR Compliant
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.{md,adoc}]
+trim_trailing_whitespace = false
+
+[*.jl]
+indent_size = 4
+
+[*.{sh,bash}]
+indent_size = 2
+
+[Makefile]
+indent_style = tab
+
+[*.yml]
+indent_size = 2
+
+[*.toml]
+indent_size = 2
+
+[justfile]
+indent_size = 4

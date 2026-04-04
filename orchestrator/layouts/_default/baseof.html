@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="{{ site.LanguageCode | default "en-GB" }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+
+  <title>{{ if .Title }}{{ .Title }} | {{ end }}{{ site.Title }}</title>
+  <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ site.Params.description }}{{ end }}">
+
+  <!-- Security note: Headers should be set by server/CDN, not meta tags -->
+  <!-- See hugo.toml [server.headers] for configuration -->
+
+  <link rel="canonical" href="{{ .Permalink }}">
+  <link rel="stylesheet" href="{{ "css/main.css" | relURL }}">
+
+  <!-- Accessibility: Reduced motion preference -->
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+
+  {{ template "_internal/opengraph.html" . }}
+  {{ template "_internal/schema.html" . }}
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  {{ partial "header.html" . }}
+
+  <main id="main-content" role="main">
+    {{ block "main" . }}{{ end }}
+  </main>
+
+  {{ partial "footer.html" . }}
+</body>
+</html>

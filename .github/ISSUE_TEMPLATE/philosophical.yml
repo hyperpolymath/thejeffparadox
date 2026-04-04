@@ -1,0 +1,94 @@
+name: Philosophical Contribution
+description: Propose philosophical analysis, framework, or interpretation
+title: "[Philosophy]: "
+labels: ["philosophy", "discussion"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The Jeff Paradox has a philosophical dimension. We welcome rigorous
+        analysis of what this experiment can and cannot show about LLM
+        diachronic identity.
+
+        **Note**: Consider starting a Discussion first for exploratory ideas.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Contribution Type
+      description: What kind of philosophical contribution is this?
+      options:
+        - Literature review
+        - Conceptual analysis
+        - Methodology critique
+        - Interpretation framework
+        - Counter-argument
+        - Historical context
+        - Connection to other work
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Brief summary of your contribution (2-3 sentences)
+    validations:
+      required: true
+
+  - type: textarea
+    id: argument
+    attributes:
+      label: Full Argument
+      description: |
+        Present your analysis in detail. Please:
+        - Define key terms
+        - Cite relevant sources
+        - Acknowledge limitations
+        - Connect to the experiment
+      placeholder: |
+        ## Background
+        ...
+
+        ## Argument
+        ...
+
+        ## Implications for the Experiment
+        ...
+
+        ## Limitations
+        ...
+
+        ## References
+        ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: implications
+    attributes:
+      label: Practical Implications
+      description: |
+        How should this analysis affect the experiment?
+        Should we change methodology, interpretation, or claims?
+
+  - type: textarea
+    id: references
+    attributes:
+      label: Key References
+      description: List relevant academic works, if any
+      placeholder: |
+        - Chater, N. (2018). The Mind is Flat.
+        - Kant, I. (1781). Critique of Pure Reason.
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Would you like to contribute this analysis?
+      options:
+        - label: I am willing to submit a pull request with this analysis
+        - label: I would like this discussed before any changes are made

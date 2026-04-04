@@ -1,0 +1,96 @@
+{{/* Metrics Display Partial */}}
+{{/* Expects .Params.metrics or site.Data.metrics */}}
+
+{{ $metrics := .Params.metrics | default site.Data.metrics }}
+
+{{ with $metrics }}
+<div class="metrics-display" role="region" aria-label="Conversation metrics">
+  <dl class="metrics-grid">
+    {{ with .vocabulary_diversity }}
+    <div class="metric">
+      <dt>Vocabulary Diversity</dt>
+      <dd>
+        <span class="metric-value">{{ printf "%.3f" . }}</span>
+        <span class="metric-description">Type-token ratio</span>
+      </dd>
+    </div>
+    {{ end }}
+
+    {{ with .self_reference_rate }}
+    <div class="metric">
+      <dt>Self-Reference Rate</dt>
+      <dd>
+        <span class="metric-value">{{ printf "%.3f" . }}</span>
+        <span class="metric-description">First-person frequency</span>
+      </dd>
+    </div>
+    {{ end }}
+
+    {{ with .other_reference_rate }}
+    <div class="metric">
+      <dt>Other-Reference Rate</dt>
+      <dd>
+        <span class="metric-value">{{ printf "%.3f" . }}</span>
+        <span class="metric-description">Second-person frequency</span>
+      </dd>
+    </div>
+    {{ end }}
+
+    {{ with .topic_drift }}
+    <div class="metric">
+      <dt>Topic Drift</dt>
+      <dd>
+        <span class="metric-value">{{ printf "%.3f" . }}</span>
+        <span class="metric-description">Semantic distance from start</span>
+      </dd>
+    </div>
+    {{ end }}
+
+    {{ with .coherence_score }}
+    <div class="metric">
+      <dt>Coherence</dt>
+      <dd>
+        <span class="metric-value">{{ printf "%.3f" . }}</span>
+        <span class="metric-description">Local consistency</span>
+      </dd>
+    </div>
+    {{ end }}
+
+    {{ with .convergence_index }}
+    <div class="metric">
+      <dt>Convergence Index</dt>
+      <dd>
+        <span class="metric-value">{{ printf "%.3f" . }}</span>
+        <span class="metric-description">Node similarity</span>
+        {{ if gt . 0.7 }}
+        <span class="metric-warning" role="alert">High convergence detected</span>
+        {{ end }}
+      </dd>
+    </div>
+    {{ end }}
+
+    {{ with .novel_ngrams }}
+    <div class="metric">
+      <dt>Novel N-grams</dt>
+      <dd>
+        <span class="metric-value">{{ . }}</span>
+        <span class="metric-description">New patterns in recent turns</span>
+      </dd>
+    </div>
+    {{ end }}
+  </dl>
+
+  {{ with .emergent_patterns }}
+  {{ if . }}
+  <section aria-labelledby="emergence-heading">
+    <h3 id="emergence-heading">Detected Emergent Patterns</h3>
+    <ul role="list">
+      {{ range . }}
+      <li>{{ . }}</li>
+      {{ end }}
+    </ul>
+  </section>
+  {{ end }}
+  {{ end }}
+</div>
+{{ end }}

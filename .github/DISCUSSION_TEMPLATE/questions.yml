@@ -1,0 +1,47 @@
+title: "[Q&A] "
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Question
+
+        Ask your question here. Please check existing discussions first!
+
+  - type: checkboxes
+    attributes:
+      label: Have you checked existing resources?
+      options:
+        - label: I have searched existing discussions
+          required: true
+        - label: I have read the README and documentation
+          required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Any relevant context that might help us answer
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Installation/Setup
+        - Usage
+        - Configuration
+        - Engine (Julia)
+        - Static Sites (Hugo)
+        - CI/CD
+        - Philosophy
+        - Other

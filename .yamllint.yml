@@ -1,0 +1,34 @@
+# YAML Lint Configuration
+
+extends: default
+
+rules:
+  line-length:
+    max: 120
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+
+  indentation:
+    spaces: 2
+    indent-sequences: true
+
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no']
+
+  comments:
+    min-spaces-from-content: 1
+
+  document-start: disable
+
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 0
+
+ignore: |
+  node_modules/
+  vendor/
+  .git/

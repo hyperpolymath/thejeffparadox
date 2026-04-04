@@ -1,0 +1,123 @@
+# The Jeff Paradox - Container Image
+# RSR Compliant: Wolfi-based minimal image
+#
+# Build: podman build -t jeff-paradox -f container/Containerfile .
+# Run:   podman run -it --rm jeff-paradox
+
+# =============================================================================
+# Stage 1: Julia Engine Builder
+# =============================================================================
+FROM cgr.dev/chainguard/wolfi-base:latest AS julia-builder
+
+# Install build dependencies
+RUN apk add --no-cache \
+    curl \
+    tar \
+    gzip \
+    ca-certificates
+
+# Download and install Julia
+ARG JULIA_VERSION=1.10.0
+RUN curl -fsSL "https://julialang-s3.julialang.org/bin/linux/x64/1.10/julia-${JULIA_VERSION}-linux-x86_64.tar.gz" \
+    | tar -xz -C /opt \
+    && ln -s /opt/julia-${JULIA_VERSION}/bin/julia /usr/local/bin/julia
+
+# Copy engine source
+WORKDIR /build/engine
+COPY engine/Project.toml engine/Manifest.toml ./
+COPY engine/src ./src
+COPY engine/test ./test
+
+# Precompile Julia packages
+RUN julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
+
+# =============================================================================
+# Stage 2: Ada TUI Builder (optional - compile if GNAT available)
+# =============================================================================
+FROM cgr.dev/chainguard/wolfi-base:latest AS ada-builder
+
+# Note: Ada/GNAT may need custom build for Wolfi
+# For now, we document that Ada TUI runs on host or separate container
+WORKDIR /build/tui
+COPY tui/ ./
+
+# Placeholder - Ada compilation requires GNAT toolchain
+# gprbuild -P jeff_tui.gpr -XBUILD_MODE=release
+
+# =============================================================================
+# Stage 3: Hugo Static Site Builder
+# =============================================================================
+FROM cgr.dev/chainguard/wolfi-base:latest AS hugo-builder
+
+RUN apk add --no-cache \
+    hugo \
+    git
+
+WORKDIR /build
+
+# Copy Hugo sites
+COPY orchestrator ./orchestrator
+COPY node-alpha ./node-alpha
+COPY node-beta ./node-beta
+
+# Build all sites
+RUN cd orchestrator && hugo --minify --gc \
+    && cd ../node-alpha && hugo --minify --gc \
+    && cd ../node-beta && hugo --minify --gc
+
+# =============================================================================
+# Stage 4: Final Runtime Image
+# =============================================================================
+FROM cgr.dev/chainguard/wolfi-base:latest AS runtime
+
+LABEL org.opencontainers.image.title="The Jeff Paradox"
+LABEL org.opencontainers.image.description="Infinite conversation experiment between LLMs"
+LABEL org.opencontainers.image.vendor="The Jeff Paradox Project"
+LABEL org.opencontainers.image.source="https://github.com/Hyperpolymath/thejeffparadox"
+LABEL org.opencontainers.image.licenses="MIT"
+
+# Security labels
+LABEL io.containers.capabilities.drop="ALL"
+LABEL io.containers.readonly="true"
+
+# Install minimal runtime dependencies
+RUN apk add --no-cache \
+    ca-certificates \
+    tzdata
+
+# Create non-root user
+RUN addgroup -g 1000 jeff \
+    && adduser -u 1000 -G jeff -s /bin/sh -D jeff
+
+# Copy Julia installation from builder
+COPY --from=julia-builder /opt/julia-* /opt/julia
+COPY --from=julia-builder /build/engine /app/engine
+
+# Copy built static sites
+COPY --from=hugo-builder /build/orchestrator/public /app/public/orchestrator
+COPY --from=hugo-builder /build/node-alpha/public /app/public/node-alpha
+COPY --from=hugo-builder /build/node-beta/public /app/public/node-beta
+
+# Copy configuration
+COPY orchestrator/data /app/data
+
+# Set ownership
+RUN chown -R jeff:jeff /app
+
+# Switch to non-root user
+USER jeff
+WORKDIR /app
+
+# Julia environment
+ENV JULIA_DEPOT_PATH=/app/.julia
+ENV PATH="/opt/julia/bin:${PATH}"
+
+# Expose static site port (optional, for local serving)
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+    CMD julia -e 'println("healthy")' || exit 1
+
+# Default command: run conversation turn
+CMD ["julia", "--project=engine", "-e", "using JeffEngine; println(\"Ready\")"]

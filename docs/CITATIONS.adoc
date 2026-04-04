@@ -1,0 +1,36 @@
+= thejeffparadox - Citation Guide
+:toc:
+
+== BibTeX
+
+[source,bibtex]
+----
+@software{thejeffparadox_2025,
+  author = {Polymath, Hyper},
+  title = {thejeffparadox},
+  year = {2025},
+  url = {https://github.com/hyperpolymath/thejeffparadox},
+  license = {PMPL-1.0-or-later}
+}
+----
+
+== Harvard Style
+
+Polymath, H. (2025) _thejeffparadox_ [Computer software]. Available at: https://github.com/hyperpolymath/thejeffparadox
+
+== OSCOLA
+
+Hyper Polymath, 'thejeffparadox' (2025) <https://github.com/hyperpolymath/thejeffparadox>
+
+== MLA
+
+Polymath, Hyper. "thejeffparadox." 2025, github.com/hyperpolymath/thejeffparadox.
+
+== APA 7
+
+Polymath, H. (2025). _thejeffparadox_ [Computer software]. GitHub. https://github.com/hyperpolymath/thejeffparadox
+
+== See Also
+
+* link:../CITATION.cff[CITATION.cff]
+* link:../codemeta.json[codemeta.json]

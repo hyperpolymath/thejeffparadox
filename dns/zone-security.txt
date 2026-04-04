@@ -1,0 +1,162 @@
+; =============================================================================
+; The Jeff Paradox - DNS Security Zone Records
+; RSR Compliant: Full email security, CAA, and service verification
+;
+; Import Instructions:
+; 1. Replace YOURDOMAIN.COM with your actual domain
+; 2. Replace placeholder values (YOUR-DKIM-SELECTOR, etc.)
+; 3. Import via your DNS provider's zone import feature
+; 4. Enable DNSSEC at registrar level
+;
+; Last updated: 2024
+; =============================================================================
+
+$ORIGIN YOURDOMAIN.COM.
+$TTL 3600
+
+; =============================================================================
+; SPF (Sender Policy Framework) - RFC 7208
+; Prevents email spoofing by specifying authorized mail servers
+; =============================================================================
+
+; Main domain SPF - adjust based on your email provider
+; -all = hard fail (reject unauthorized), ~all = soft fail (mark as spam)
+@               IN  TXT     "v=spf1 include:_spf.google.com include:amazonses.com -all"
+
+; Subdomain SPF records (prevent subdomain spoofing)
+*               IN  TXT     "v=spf1 -all"
+mail            IN  TXT     "v=spf1 include:_spf.google.com -all"
+
+; =============================================================================
+; DKIM (DomainKeys Identified Mail) - RFC 6376
+; Cryptographic email signing for authenticity verification
+; Generate keys with: opendkim-genkey -s selector -d yourdomain.com
+; =============================================================================
+
+; DKIM public key record (replace with your actual key)
+; selector._domainkey.YOURDOMAIN.COM
+YOUR-DKIM-SELECTOR._domainkey  IN  TXT  ( "v=DKIM1; k=rsa; "
+    "p=YOUR-DKIM-PUBLIC-KEY-BASE64-ENCODED-SPLIT-INTO-255-CHAR-CHUNKS" )
+
+; Google Workspace DKIM (if using Google)
+google._domainkey  IN  TXT  "v=DKIM1; k=rsa; p=YOUR-GOOGLE-DKIM-KEY"
+
+; =============================================================================
+; DMARC (Domain-based Message Authentication) - RFC 7489
+; Policy for handling SPF/DKIM failures
+; =============================================================================
+
+; DMARC policy record
+; p=reject: Reject failed messages (strictest)
+; p=quarantine: Send to spam
+; p=none: Monitor only (start here)
+; rua: Aggregate reports, ruf: Forensic reports
+_dmarc          IN  TXT     "v=DMARC1; p=reject; rua=mailto:dmarc-reports@YOURDOMAIN.COM; ruf=mailto:dmarc-forensics@YOURDOMAIN.COM; fo=1; adkim=s; aspf=s; pct=100"
+
+; =============================================================================
+; MTA-STS (Mail Transfer Agent Strict Transport Security) - RFC 8461
+; Enforces TLS for inbound email
+; =============================================================================
+
+; MTA-STS policy location pointer
+_mta-sts        IN  TXT     "v=STSv1; id=20240101000000"
+
+; MTA-STS HTTPS endpoint (host the policy at this URL)
+; https://mta-sts.YOURDOMAIN.COM/.well-known/mta-sts.txt
+mta-sts         IN  CNAME   YOURDOMAIN.COM.
+
+; =============================================================================
+; TLS-RPT (TLS Reporting) - RFC 8460
+; Receive reports about TLS connection failures
+; =============================================================================
+
+_smtp._tls      IN  TXT     "v=TLSRPTv1; rua=mailto:tls-reports@YOURDOMAIN.COM"
+
+; =============================================================================
+; BIMI (Brand Indicators for Message Identification)
+; Display your logo in supporting email clients
+; =============================================================================
+
+; BIMI record (requires VMC certificate for full support)
+default._bimi   IN  TXT     "v=BIMI1; l=https://YOURDOMAIN.COM/.well-known/logo.svg; a=https://YOURDOMAIN.COM/.well-known/vmc.pem"
+
+; =============================================================================
+; CAA (Certification Authority Authorization) - RFC 8659
+; Specifies which CAs can issue certificates for your domain
+; =============================================================================
+
+; Allow only Let's Encrypt and DigiCert to issue certificates
+; 0 = non-critical (CA may still issue), 128 = critical (CA must not issue)
+@               IN  CAA     0 issue "letsencrypt.org"
+@               IN  CAA     0 issue "digicert.com"
+@               IN  CAA     0 issuewild "letsencrypt.org"
+@               IN  CAA     0 iodef "mailto:security@YOURDOMAIN.COM"
+
+; Prevent wildcard certificates from other CAs
+@               IN  CAA     0 issuewild ";"
+
+; =============================================================================
+; DANE (DNS-based Authentication of Named Entities) - RFC 6698
+; Certificate pinning via DNS (requires DNSSEC)
+; =============================================================================
+
+; TLSA record for mail server (port 25)
+; Usage: 3 (DANE-EE), Selector: 1 (SubjectPublicKeyInfo), Matching: 1 (SHA-256)
+; Generate: openssl x509 -in cert.pem -pubkey -noout | openssl pkey -pubin -outform DER | openssl sha256
+_25._tcp.mail   IN  TLSA    3 1 1 YOUR-CERTIFICATE-SHA256-HASH
+
+; TLSA for HTTPS (port 443)
+_443._tcp       IN  TLSA    3 1 1 YOUR-CERTIFICATE-SHA256-HASH
+
+; =============================================================================
+; Service Verification Records
+; =============================================================================
+
+; Google Site Verification
+@               IN  TXT     "google-site-verification=YOUR-VERIFICATION-CODE"
+
+; GitHub Pages verification
+_github-pages-challenge-YOURUSERNAME  IN  TXT  "YOUR-GITHUB-VERIFICATION"
+
+; Keybase verification
+_keybase        IN  TXT     "keybase-site-verification=YOUR-KEYBASE-CODE"
+
+; Have I Been Pwned domain verification
+_hibp           IN  TXT     "hibp-verification=YOUR-HIBP-CODE"
+
+; =============================================================================
+; Security Contact (security.txt DNS pointer) - RFC 9116
+; =============================================================================
+
+_security       IN  TXT     "security_contact=mailto:security@YOURDOMAIN.COM"
+_security       IN  TXT     "security_policy=https://YOURDOMAIN.COM/.well-known/security.txt"
+
+; =============================================================================
+; AI/Bot Disclosure - Proposed Standard
+; =============================================================================
+
+_ai             IN  TXT     "ai-policy=https://YOURDOMAIN.COM/.well-known/ai.txt"
+
+; =============================================================================
+; DNSSEC Information
+; =============================================================================
+; DNSSEC must be enabled at your registrar level.
+; DS records are generated from your zone signing key (ZSK).
+;
+; Example DS record (provided by registrar after enabling DNSSEC):
+; YOURDOMAIN.COM. IN DS 12345 13 2 HASH-VALUE
+;
+; Verify DNSSEC: dig +dnssec YOURDOMAIN.COM
+; =============================================================================
+
+; =============================================================================
+; Notes on Implementation
+; =============================================================================
+; 1. Start with DMARC p=none to collect reports before enforcing
+; 2. Enable DNSSEC before adding DANE/TLSA records
+; 3. MTA-STS requires hosting a policy file at specific URL
+; 4. BIMI requires Verified Mark Certificate (VMC) from CA
+; 5. Monitor aggregate reports from DMARC, TLS-RPT
+; 6. Rotate DKIM keys annually
+; 7. Update CAA when changing certificate providers
+; =============================================================================

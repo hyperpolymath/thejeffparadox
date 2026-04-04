@@ -1,0 +1,22 @@
+# Issue template configuration
+# https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/configuring-issue-templates-for-your-repository
+
+blank_issues_enabled: false
+
+contact_links:
+  - name: Question or Discussion
+    url: https://github.com/Hyperpolymath/thejeffparadox/discussions/new/choose
+    about: |
+      Please use GitHub Discussions for questions, ideas, and general conversation.
+      Issues are for bug reports and specific feature requests only.
+
+  - name: Security Vulnerability
+    url: https://github.com/Hyperpolymath/thejeffparadox/security/advisories/new
+    about: |
+      Please report security vulnerabilities through GitHub Security Advisories,
+      not public issues. See SECURITY.md for details.
+
+  - name: Support
+    url: https://github.com/Hyperpolymath/thejeffparadox/blob/main/.github/SUPPORT.md
+    about: |
+      Need help? Check our support documentation first.

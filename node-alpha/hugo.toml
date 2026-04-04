@@ -1,0 +1,31 @@
+# Node Alpha - Hugo Configuration
+# The Jeff Paradox: Homeward Faction Fragment
+
+baseURL = "https://thejeffparadox.example.com/node-alpha/"
+languageCode = "en-GB"
+title = "Node Alpha | The Jeff Paradox"
+
+[params]
+  description = "Homeward faction personality fragment of The Jeff"
+  node_name = "Alpha"
+  faction = "homeward"
+  faction_color = "#2c5282"
+  faction_color_light = "#e6f0fa"
+
+[server]
+  [[server.headers]]
+    for = "/**"
+    [server.headers.values]
+      Content-Security-Policy = "default-src 'self'; style-src 'self' 'unsafe-inline'"
+      X-Content-Type-Options = "nosniff"
+      X-Frame-Options = "DENY"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = false
+
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
+  page = ["HTML"]

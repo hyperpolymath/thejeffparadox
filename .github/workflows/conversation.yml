@@ -1,0 +1,130 @@
+# SPDX-License-Identifier: MPL-2.0-or-later
+# The Jeff Paradox - Automated Conversation
+# This workflow runs the infinite conversation automatically
+# RSR Compliant: All actions SHA-pinned
+
+name: Conversation Turn
+
+on:
+  schedule:
+    # Run every 6 hours (4 turns per day)
+    - cron: "0 */6 * * *"
+
+  workflow_dispatch:
+    inputs:
+      turns:
+        description: "Number of turns to execute"
+        required: false
+        type: number
+        default: 1
+      force_node:
+        description: "Force specific node (alpha/beta)"
+        required: false
+        type: choice
+        options:
+          - auto
+          - alpha
+          - beta
+        default: auto
+      diversity_injection:
+        description: "Force diversity injection"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: conversation
+  cancel-in-progress: false
+
+env:
+  JULIA_VERSION: "1.10"
+  HUGO_VERSION: "0.121.0"
+
+
+permissions: read-all
+
+jobs:
+  conversation-turn:
+    name: Execute Turn
+    runs-on: ubuntu-latest
+
+    # Only run if API keys are configured
+    if: ${{ vars.CONVERSATION_ENABLED == 'true' }}
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@9b79636afcfb07ab02c256cede01fe2db6ba808c # v2.6.0
+        with:
+          version: ${{ env.JULIA_VERSION }}
+
+      - name: Cache Julia packages
+        uses: julia-actions/cache@d10a6fd8f31b12404a54613ebad242900567f2b9 # v2.1.0
+
+      - name: Install Julia dependencies
+        run: |
+          cd engine
+          julia --project=. -e 'using Pkg; Pkg.instantiate()'
+
+      - name: Execute conversation turn
+        id: turn
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          FORCE_NODE: ${{ inputs.force_node || 'auto' }}
+          FORCE_DIVERSITY: ${{ inputs.diversity_injection || 'false' }}
+          GITHUB_OUTPUT: ${{ github.output }}
+        run: |
+          cd engine
+          julia scripts/execute_turn.jl
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@16361eb4acea8698b220b76c0d4e84e1fd22c61d # v2.6.0
+        with:
+          hugo-version: ${{ env.HUGO_VERSION }}
+          extended: true
+
+      - name: Build sites
+        run: |
+          cd orchestrator && hugo --minify --gc
+          cd ../node-alpha && hugo --minify --gc
+          cd ../node-beta && hugo --minify --gc
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add -A
+          git diff --staged --quiet || git commit -m "feat(conversation): turn ${{ steps.turn.outputs.turn_number }} by ${{ steps.turn.outputs.node }}
+
+          Chaos: ${{ steps.turn.outputs.chaos }}/100
+          Exposure: ${{ steps.turn.outputs.exposure }}/100
+          Faction: ${{ steps.turn.outputs.faction }}
+
+          [automated]"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # v1.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
+      - name: Create summary
+        run: |
+          echo "## Conversation Turn ${{ steps.turn.outputs.turn_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Node**: ${{ steps.turn.outputs.node }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Game State" >> $GITHUB_STEP_SUMMARY
+          echo "- Chaos: ${{ steps.turn.outputs.chaos }}/100" >> $GITHUB_STEP_SUMMARY
+          echo "- Exposure: ${{ steps.turn.outputs.exposure }}/100" >> $GITHUB_STEP_SUMMARY
+          echo "- Faction: ${{ steps.turn.outputs.faction }}" >> $GITHUB_STEP_SUMMARY

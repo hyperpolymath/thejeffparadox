@@ -1,0 +1,4 @@
+/* TEAM */
+The Jeff Paradox - Human/AI Collaboration
+Standards: HTML5, CSS3, WCAG 2.2 AAA
+Components: Hugo, Jekyll, Julia

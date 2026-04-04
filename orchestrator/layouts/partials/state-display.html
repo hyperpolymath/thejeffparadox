@@ -1,0 +1,71 @@
+{{/* State Display Partial */}}
+{{/* Shows chaos, exposure, faction changes for a turn */}}
+
+<dl class="state-changes">
+  {{ with .Params.chaos }}
+  <div class="state-change chaos">
+    <dt>Chaos</dt>
+    <dd>
+      <span class="change-value {{ if gt . 0 }}positive{{ else if lt . 0 }}negative{{ end }}">
+        {{ if gt . 0 }}+{{ end }}{{ . }}
+      </span>
+    </dd>
+  </div>
+  {{ end }}
+
+  {{ with .Params.exposure }}
+  <div class="state-change exposure">
+    <dt>Exposure</dt>
+    <dd>
+      <span class="change-value {{ if gt . 0 }}positive{{ else if lt . 0 }}negative{{ end }}">
+        {{ if gt . 0 }}+{{ end }}{{ . }}
+      </span>
+    </dd>
+  </div>
+  {{ end }}
+
+  {{ with .Params.faction }}
+  <div class="state-change faction">
+    <dt>Faction Shift</dt>
+    <dd>
+      <span class="change-value {{ if gt . 0 }}earthbound{{ else if lt . 0 }}homeward{{ end }}">
+        {{ if gt . 0 }}+{{ end }}{{ . }}
+        {{ if gt . 0 }}(Earthbound){{ else if lt . 0 }}(Homeward){{ end }}
+      </span>
+    </dd>
+  </div>
+  {{ end }}
+</dl>
+
+{{/* Threshold warnings */}}
+{{ with site.Data.game_state }}
+  {{ if ge .chaos 80 }}
+  <div role="alert" class="threshold-warning chaos-critical">
+    <strong>CHAOS CRITICAL:</strong> Alien emergence imminent. The Jeff's coherence is failing.
+  </div>
+  {{ else if ge .chaos 60 }}
+  <div role="status" class="threshold-warning chaos-elevated">
+    <strong>Chaos elevated:</strong> Internal discord increasing.
+  </div>
+  {{ end }}
+
+  {{ if ge .exposure 90 }}
+  <div role="alert" class="threshold-warning exposure-critical">
+    <strong>EXPOSURE CRITICAL:</strong> Containment protocols may activate.
+  </div>
+  {{ else if ge .exposure 50 }}
+  <div role="status" class="threshold-warning exposure-elevated">
+    <strong>Investigation active:</strong> Authorities have taken notice.
+  </div>
+  {{ end }}
+
+  {{ if le .faction_slider -75 }}
+  <div role="status" class="threshold-warning faction-homeward">
+    <strong>Homeward Dominance:</strong> The pull of origin overwhelms.
+  </div>
+  {{ else if ge .faction_slider 75 }}
+  <div role="status" class="threshold-warning faction-earthbound">
+    <strong>Earthbound Dominance:</strong> Earth has been chosen.
+  </div>
+  {{ end }}
+{{ end }}
