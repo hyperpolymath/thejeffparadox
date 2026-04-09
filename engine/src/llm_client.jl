@@ -11,6 +11,7 @@ All communication via HTTPS. API keys from environment variables only.
 
 using HTTP
 using JSON3
+using Dates
 
 # ============================================================================
 # Provider Configuration
@@ -40,6 +41,85 @@ const PROVIDERS = Dict(
 # ============================================================================
 # Request Building
 # ============================================================================
+
+"""
+    validate_provider(provider::String)
+
+Validate that a provider is configured and has an API key set.
+Throws ArgumentError for unknown providers and warns for missing keys.
+"""
+function validate_provider(provider::String)
+    if !haskey(PROVIDERS, provider)
+        error("Unknown LLM provider '$(provider)'. Available: $(join(keys(PROVIDERS), ", "))")
+    end
+    config = PROVIDERS[provider]
+    api_key = get(ENV, config.key_env, "")
+    if isempty(api_key) && provider != "local"
+        @warn "API key not set for provider '$(provider)'. Set $(config.key_env) environment variable."
+    end
+end
+
+"""
+    classify_http_error(status::Int, provider::String, body::String) -> String
+
+Return a human-readable error description for an HTTP status code,
+including provider-specific error details when available.
+"""
+function classify_http_error(status::Int, provider::String, body::String)::String
+    detail = try
+        data = JSON3.read(body)
+        if provider == "anthropic" && haskey(data, "error")
+            err = data["error"]
+            msg = haskey(err, "message") ? string(err["message"]) : ""
+            typ = haskey(err, "type") ? string(err["type"]) : ""
+            isempty(msg) ? typ : "$(typ): $(msg)"
+        elseif haskey(data, "error")
+            err = data["error"]
+            if err isa AbstractString
+                err
+            elseif haskey(err, "message")
+                string(err["message"])
+            else
+                ""
+            end
+        else
+            ""
+        end
+    catch
+        ""
+    end
+
+    base = if status == 400
+        "Bad request — check model name and request parameters"
+    elseif status == 401
+        "Authentication failed — verify API key is valid"
+    elseif status == 403
+        "Access denied — API key may lack required permissions"
+    elseif status == 404
+        "Endpoint not found — check provider URL and model name"
+    elseif status == 429
+        "Rate limited — too many requests, will retry with backoff"
+    elseif status == 500
+        "Provider internal error — transient, will retry"
+    elseif status == 502 || status == 503
+        "Provider unavailable — transient, will retry"
+    elseif status == 529
+        "Provider overloaded — transient, will retry"
+    else
+        "Unexpected HTTP status $(status)"
+    end
+
+    isempty(detail) ? base : "$(base) ($(detail))"
+end
+
+"""
+    is_retryable(status::Int) -> Bool
+
+Determine whether an HTTP error status warrants a retry.
+"""
+function is_retryable(status::Int)::Bool
+    status in (429, 500, 502, 503, 529)
+end
 
 """
     build_headers(provider::String) -> Vector{Pair{String,String}}
@@ -146,7 +226,10 @@ end
 """
     call_llm(provider, model, messages, temperature, max_tokens; retries=3) -> String
 
-Make API call to LLM provider with retry logic.
+Make API call to LLM provider with retry logic and structured error handling.
+
+Retries on transient errors (429, 5xx) with exponential backoff.
+Fails fast on non-retryable errors (400, 401, 403, 404).
 """
 function call_llm(
     provider::String,
@@ -157,10 +240,14 @@ function call_llm(
     retries::Int=3
 )::String
 
+    validate_provider(provider)
+
     config = PROVIDERS[provider]
     url = config.base_url * config.chat_endpoint
     headers = build_headers(provider)
     body = build_request_body(provider, model, messages, temperature, max_tokens)
+
+    last_error = nothing
 
     for attempt in 1:retries
         try
@@ -173,21 +260,49 @@ function call_llm(
             )
 
             if response.status == 200
-                return parse_response(provider, String(response.body))
+                text = parse_response(provider, String(response.body))
+                if isempty(text)
+                    @warn "LLM returned empty response" provider=provider model=model attempt=attempt
+                end
+                return text
             else
-                @warn "API returned status $(response.status)" attempt=attempt
+                response_body = String(response.body)
+                err_msg = classify_http_error(response.status, provider, response_body)
+
+                if !is_retryable(response.status)
+                    error("$(provider)/$(model): $(err_msg)")
+                end
+
+                @warn "LLM API error (retryable)" provider=provider status=response.status message=err_msg attempt=attempt max_retries=retries
+                last_error = err_msg
             end
         catch e
-            @warn "API call failed" exception=e attempt=attempt
-
-            if attempt < retries
-                # Exponential backoff
-                sleep(2^attempt)
+            if e isa ErrorException && !occursin("retryable", string(e.msg)) && occursin(provider, string(e.msg))
+                rethrow(e)  # Non-retryable error from status check above
             end
+
+            err_str = if e isa HTTP.ExceptionRequest.StatusError
+                classify_http_error(e.status, provider, String(e.response.body))
+            elseif e isa Base.IOError || e isa HTTP.ConnectError
+                "Connection failed — is $(provider) API reachable? ($(typeof(e)))"
+            elseif e isa HTTP.TimeoutError
+                "Request timed out after 120s — consider shorter prompts or check provider status"
+            else
+                "Unexpected error: $(typeof(e)): $(sprint(showerror, e))"
+            end
+
+            @warn "LLM API call failed" provider=provider error=err_str attempt=attempt max_retries=retries
+            last_error = err_str
+        end
+
+        if attempt < retries
+            delay = min(2^attempt, 30)  # Cap backoff at 30s
+            @info "Retrying in $(delay)s..." attempt=attempt next_attempt=attempt+1
+            sleep(delay)
         end
     end
 
-    error("Failed to get response after $retries attempts")
+    error("$(provider)/$(model): Failed after $(retries) attempts. Last error: $(last_error)")
 end
 
 # ============================================================================
@@ -372,23 +487,25 @@ const EMBEDDING_PROVIDERS = Dict(
 Get embedding vector for text. Used for semantic similarity computations.
 """
 function get_embedding(text::String, provider::String="local")::Vector{Float64}
+    if !haskey(EMBEDDING_PROVIDERS, provider)
+        @warn "Unknown embedding provider '$(provider)', returning zero vector"
+        return zeros(Float64, 1024)
+    end
+
     config = EMBEDDING_PROVIDERS[provider]
     api_key = get(ENV, config.key_env, "")
 
+    if isempty(api_key) && provider != "local"
+        @warn "Embedding API key not set ($(config.key_env)), returning zero vector" provider=provider
+        return zeros(Float64, config.dimensions)
+    end
+
     url = config.base_url * config.endpoint
 
-    headers = if provider == "anthropic"
-        # Voyage AI uses Bearer token
-        [
-            "Content-Type" => "application/json",
-            "Authorization" => "Bearer $(api_key)"
-        ]
-    else
-        [
-            "Content-Type" => "application/json",
-            "Authorization" => "Bearer $(api_key)"
-        ]
-    end
+    headers = [
+        "Content-Type" => "application/json",
+        "Authorization" => "Bearer $(api_key)"
+    ]
 
     body = JSON3.write(Dict(
         "model" => config.model,
@@ -400,13 +517,22 @@ function get_embedding(text::String, provider::String="local")::Vector{Float64}
 
         if response.status == 200
             data = JSON3.read(String(response.body))
-            return Float64.(data["data"][1]["embedding"])
+            embedding = data["data"][1]["embedding"]
+            return Float64.(embedding)
         else
-            @warn "Embedding API returned status $(response.status)"
+            err_msg = classify_http_error(response.status, provider, String(response.body))
+            @warn "Embedding API error" provider=provider status=response.status message=err_msg
             return zeros(Float64, config.dimensions)
         end
     catch e
-        @warn "Embedding API call failed" exception=e
+        err_str = if e isa Base.IOError || e isa HTTP.ConnectError
+            "Connection failed — is embedding service reachable?"
+        elseif e isa HTTP.TimeoutError
+            "Embedding request timed out"
+        else
+            "$(typeof(e)): $(sprint(showerror, e))"
+        end
+        @warn "Embedding API call failed" provider=provider error=err_str
         return zeros(Float64, config.dimensions)
     end
 end
@@ -457,21 +583,30 @@ end
     check_rate_limit(limiter::RateLimiter, estimated_tokens::Int) -> Bool
 
 Check if request would exceed rate limits. Returns true if OK to proceed.
+Cleans stale entries and checks both request count and token budget.
 """
 function check_rate_limit(limiter::RateLimiter, estimated_tokens::Int)::Bool
     now_time = now()
     minute_ago = now_time - Minute(1)
 
-    # Clean old entries
-    filter!(t -> t > minute_ago, limiter.request_times)
+    # Clean stale entries from both vectors in lockstep
+    valid = [t > minute_ago for t in limiter.request_times]
+    limiter.request_times = limiter.request_times[valid]
+    limiter.token_counts = limiter.token_counts[valid]
 
     limits = RATE_LIMITS[limiter.provider]
 
     if length(limiter.request_times) >= limits.requests_per_minute
+        @info "Rate limit reached (requests)" provider=limiter.provider current=length(limiter.request_times) limit=limits.requests_per_minute
         return false
     end
 
-    # Token check would require tracking; simplified here
+    recent_tokens = sum(limiter.token_counts; init=0)
+    if recent_tokens + estimated_tokens > limits.tokens_per_minute
+        @info "Rate limit reached (tokens)" provider=limiter.provider current_tokens=recent_tokens estimated=estimated_tokens limit=limits.tokens_per_minute
+        return false
+    end
+
     true
 end
 
