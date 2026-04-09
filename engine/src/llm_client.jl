@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 The Jeff Paradox Collaboration
+# SPDX-License-Identifier: MIT
+
 """
 LLM API abstraction layer.
 
@@ -35,6 +38,13 @@ const PROVIDERS = Dict(
         chat_endpoint = "/chat/completions",
         model_prefix = ""
     )
+)
+
+# Default model names per provider — override via GM_MODEL env var
+const DEFAULT_MODELS = Dict(
+    "anthropic" => "claude-sonnet-4-20250514",
+    "mistral" => "mistral-large-latest",
+    "local" => "qwen/qwen3-8b"
 )
 
 # ============================================================================
@@ -287,15 +297,17 @@ end
 # ============================================================================
 
 """
-    generate_response(node, context, diversity_prompt, role) -> String
+    generate_response(node, context, diversity_prompt, role; game=nothing) -> String
 
 Generate a response for either a node or the GM.
+When `game` is provided, aperture control adjusts temperature dynamically.
 """
 function generate_response(
     node,  # NodeState or nothing for GM
     context::String,
     diversity_prompt::String,
-    role::Symbol
+    role::Symbol;
+    game=nothing
 )::String
 
     if role == :node && node !== nothing
@@ -306,21 +318,18 @@ function generate_response(
         # GM defaults - prefer cloud providers over local
         if haskey(ENV, "ANTHROPIC_API_KEY") && !isempty(get(ENV, "ANTHROPIC_API_KEY", ""))
             provider = "anthropic"
-            model = get(ENV, "GM_MODEL", "claude-sonnet-4-20250514")
         elseif haskey(ENV, "MISTRAL_API_KEY") && !isempty(get(ENV, "MISTRAL_API_KEY", ""))
             provider = "mistral"
-            model = get(ENV, "GM_MODEL", "mistral-large-latest")
         else
             provider = get(ENV, "GM_PROVIDER", "local")
-            model = get(ENV, "GM_MODEL", "qwen/qwen3-8b")
         end
+        model = get(ENV, "GM_MODEL", DEFAULT_MODELS[provider])
         temperature = 0.7
     end
 
-    # Compute adjusted temperature (aperture control)
-    if node !== nothing && hasfield(typeof(node), :temperature)
-        # Would need access to game state here for full aperture control
-        temperature = node.temperature
+    # Apply aperture control when game state is available
+    if game !== nothing
+        temperature = compute_aperture(game, temperature)
     end
 
     full_context = context
@@ -335,160 +344,4 @@ function generate_response(
     ]
 
     call_llm(provider, model, messages, temperature, 1024)
-end
-
-# ============================================================================
-# Embedding Generation
-# ============================================================================
-
-const EMBEDDING_PROVIDERS = Dict(
-    "anthropic" => (
-        # Anthropic doesn't have direct embedding API - use Voyage or local
-        base_url = "https://api.voyageai.com/v1",
-        key_env = "VOYAGE_API_KEY",
-        endpoint = "/embeddings",
-        model = "voyage-2",
-        dimensions = 1024
-    ),
-    "mistral" => (
-        base_url = "https://api.mistral.ai/v1",
-        key_env = "MISTRAL_API_KEY",
-        endpoint = "/embeddings",
-        model = "mistral-embed",
-        dimensions = 1024
-    ),
-    "local" => (
-        base_url = "http://localhost:1234/v1",
-        key_env = "LOCAL_API_KEY",
-        endpoint = "/embeddings",
-        model = "nomic-embed-text",
-        dimensions = 768
-    )
-)
-
-"""
-    get_embedding(text::String, provider::String="local") -> Vector{Float64}
-
-Get embedding vector for text. Used for semantic similarity computations.
-"""
-function get_embedding(text::String, provider::String="local")::Vector{Float64}
-    config = EMBEDDING_PROVIDERS[provider]
-    api_key = get(ENV, config.key_env, "")
-
-    url = config.base_url * config.endpoint
-
-    headers = if provider == "anthropic"
-        # Voyage AI uses Bearer token
-        [
-            "Content-Type" => "application/json",
-            "Authorization" => "Bearer $(api_key)"
-        ]
-    else
-        [
-            "Content-Type" => "application/json",
-            "Authorization" => "Bearer $(api_key)"
-        ]
-    end
-
-    body = JSON3.write(Dict(
-        "model" => config.model,
-        "input" => [text]
-    ))
-
-    try
-        response = HTTP.post(url, headers, body; connect_timeout=30, readtimeout=60)
-
-        if response.status == 200
-            data = JSON3.read(String(response.body))
-            return Float64.(data["data"][1]["embedding"])
-        else
-            @warn "Embedding API returned status $(response.status)"
-            return zeros(Float64, config.dimensions)
-        end
-    catch e
-        @warn "Embedding API call failed" exception=e
-        return zeros(Float64, config.dimensions)
-    end
-end
-
-"""
-    cosine_similarity(a::Vector{Float64}, b::Vector{Float64}) -> Float64
-
-Compute cosine similarity between two vectors.
-"""
-function cosine_similarity(a::Vector{Float64}, b::Vector{Float64})::Float64
-    if length(a) != length(b) || isempty(a)
-        return 0.0
-    end
-
-    dot_product = sum(a .* b)
-    norm_a = sqrt(sum(a .^ 2))
-    norm_b = sqrt(sum(b .^ 2))
-
-    (norm_a > 0 && norm_b > 0) ? dot_product / (norm_a * norm_b) : 0.0
-end
-
-"""
-    semantic_distance(a::Vector{Float64}, b::Vector{Float64}) -> Float64
-
-Compute semantic distance (1 - cosine_similarity).
-"""
-function semantic_distance(a::Vector{Float64}, b::Vector{Float64})::Float64
-    1.0 - cosine_similarity(a, b)
-end
-
-# ============================================================================
-# Rate Limiting
-# ============================================================================
-
-const RATE_LIMITS = Dict(
-    "anthropic" => (requests_per_minute = 50, tokens_per_minute = 40000),
-    "mistral" => (requests_per_minute = 60, tokens_per_minute = 100000),
-    "local" => (requests_per_minute = 1000, tokens_per_minute = 1000000)
-)
-
-mutable struct RateLimiter
-    provider::String
-    request_times::Vector{DateTime}
-    token_counts::Vector{Int}
-end
-
-"""
-    check_rate_limit(limiter::RateLimiter, estimated_tokens::Int) -> Bool
-
-Check if request would exceed rate limits. Returns true if OK to proceed.
-"""
-function check_rate_limit(limiter::RateLimiter, estimated_tokens::Int)::Bool
-    now_time = now()
-    minute_ago = now_time - Minute(1)
-
-    # Clean old entries (both request times and corresponding token counts)
-    valid_indices = findall(t -> t > minute_ago, limiter.request_times)
-    limiter.request_times = limiter.request_times[valid_indices]
-    limiter.token_counts = limiter.token_counts[valid_indices]
-
-    limits = RATE_LIMITS[limiter.provider]
-
-    # Check request count limit
-    if length(limiter.request_times) >= limits.requests_per_minute
-        return false
-    end
-
-    # Check token count limit
-    recent_tokens = isempty(limiter.token_counts) ? 0 : sum(limiter.token_counts)
-    if recent_tokens + estimated_tokens > limits.tokens_per_minute
-        return false
-    end
-
-    true
-end
-
-"""
-    record_request(limiter::RateLimiter, tokens::Int)
-
-Record a completed request for rate limiting.
-"""
-function record_request(limiter::RateLimiter, tokens::Int)
-    push!(limiter.request_times, now())
-    push!(limiter.token_counts, tokens)
 end

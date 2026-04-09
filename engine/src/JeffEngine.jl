@@ -22,10 +22,13 @@ using Statistics
 using LinearAlgebra
 using SHA
 
-# Sub-modules - ORDER MATTERS: llm_client before metrics (metrics uses get_embedding)
+# Sub-modules - ORDER MATTERS: conceptors before llm_client (aperture control),
+# embedding_client before metrics (metrics may use embeddings)
 include("mechanics.jl")
 include("conceptors.jl")
+include("rate_limiter.jl")
 include("llm_client.jl")
+include("embedding_client.jl")
 include("metrics.jl")
 
 # Core types
@@ -44,7 +47,12 @@ export compute_metrics, MetricsSnapshot, metrics_summary
 
 # LLM (from llm_client.jl)
 export generate_response, build_context, build_gm_context
+
+# Embeddings (from embedding_client.jl)
 export get_embedding, cosine_similarity, semantic_distance
+
+# Rate limiting (from rate_limiter.jl)
+export RateLimiter, check_rate_limit, record_request
 
 # State management (from this file)
 export initialise_game_state, initialise_node_state
@@ -208,21 +216,23 @@ function execute_turn(game::GameState, nodes::Dict{Symbol,NodeState})::TurnResul
         game.last_diversity_turn = game.turn_number
     end
 
-    # Generate node's action
+    # Generate node's action (with aperture control via game state)
     node_response = generate_response(
         current,
         context,
         diversity_prompt,
-        :node
+        :node;
+        game=game
     )
 
-    # Generate GM narration
+    # Generate GM narration (with aperture control via game state)
     gm_context = build_gm_context(game, current, node_response)
     gm_narration = generate_response(
         nothing,  # GM uses default model
         gm_context,
         "",
-        :gm
+        :gm;
+        game=game
     )
 
     # Parse and apply mechanical effects

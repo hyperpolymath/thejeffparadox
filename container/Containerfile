@@ -32,17 +32,27 @@ COPY engine/test ./test
 RUN julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.precompile()'
 
 # =============================================================================
-# Stage 2: Ada TUI Builder (optional - compile if GNAT available)
+# Stage 2: Ada TUI Builder (optional - requires GNAT toolchain)
 # =============================================================================
 FROM cgr.dev/chainguard/wolfi-base:latest AS ada-builder
 
-# Note: Ada/GNAT may need custom build for Wolfi
-# For now, we document that Ada TUI runs on host or separate container
+RUN apk add --no-cache \
+    gcc \
+    gnat \
+    gprbuild \
+    make \
+    || echo "GNAT not available in Wolfi; Ada TUI will be skipped"
+
 WORKDIR /build/tui
 COPY tui/ ./
 
-# Placeholder - Ada compilation requires GNAT toolchain
-# gprbuild -P jeff_tui.gpr -XBUILD_MODE=release
+# Build Ada TUI if GNAT is available; skip gracefully otherwise
+RUN if command -v gprbuild >/dev/null 2>&1; then \
+        gprbuild -P jeff_tui.gpr -XBUILD_MODE=release; \
+    else \
+        echo "Skipping Ada TUI build: gprbuild not found"; \
+        mkdir -p bin && touch bin/.ada-skipped; \
+    fi
 
 # =============================================================================
 # Stage 3: Hugo Static Site Builder
