@@ -462,16 +462,24 @@ function check_rate_limit(limiter::RateLimiter, estimated_tokens::Int)::Bool
     now_time = now()
     minute_ago = now_time - Minute(1)
 
-    # Clean old entries
-    filter!(t -> t > minute_ago, limiter.request_times)
+    # Clean old entries (both request times and corresponding token counts)
+    valid_indices = findall(t -> t > minute_ago, limiter.request_times)
+    limiter.request_times = limiter.request_times[valid_indices]
+    limiter.token_counts = limiter.token_counts[valid_indices]
 
     limits = RATE_LIMITS[limiter.provider]
 
+    # Check request count limit
     if length(limiter.request_times) >= limits.requests_per_minute
         return false
     end
 
-    # Token check would require tracking; simplified here
+    # Check token count limit
+    recent_tokens = isempty(limiter.token_counts) ? 0 : sum(limiter.token_counts)
+    if recent_tokens + estimated_tokens > limits.tokens_per_minute
+        return false
+    end
+
     true
 end
 

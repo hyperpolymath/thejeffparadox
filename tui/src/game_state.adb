@@ -3,6 +3,7 @@
 -------------------------------------------------------------------------------
 
 with Ada.Text_IO;           use Ada.Text_IO;
+with Ada.Strings;           use Ada.Strings;
 with Ada.Strings.Fixed;     use Ada.Strings.Fixed;
 with Ada.Directories;       use Ada.Directories;
 with Ada.Integer_Text_IO;   use Ada.Integer_Text_IO;
@@ -28,27 +29,42 @@ package body Game_State is
       while not End_Of_File (File) loop
          Get_Line (File, Line, Last);
          declare
-            L : constant String := Line (1 .. Last);
+            L : constant String := Trim (Line (1 .. Last), Both);
+            Colon_Pos : constant Natural := Index (L, ":");
+            Value_Str : constant String :=
+              (if Colon_Pos > 0 and then Colon_Pos < L'Last
+               then Trim (L (Colon_Pos + 1 .. L'Last), Both)
+               else "");
          begin
-            --  Simple YAML parsing (key: value format)
-            if Index (L, "turn_number:") > 0 then
-               Current_State.Turn_Number :=
-                 Natural'Value (L (Index (L, ":") + 1 .. Last));
-            elsif Index (L, "chaos:") > 0 then
-               Current_State.Chaos :=
-                 Natural'Value (L (Index (L, ":") + 1 .. Last));
-            elsif Index (L, "exposure:") > 0 then
-               Current_State.Exposure :=
-                 Natural'Value (L (Index (L, ":") + 1 .. Last));
-            elsif Index (L, "faction_slider:") > 0 then
-               Current_State.Faction_Slider :=
-                 Integer'Value (L (Index (L, ":") + 1 .. Last));
-            elsif Index (L, "current_node:") > 0 then
-               if Index (L, "alpha") > 0 then
-                  Current_State.Current_Node := Alpha;
-               else
-                  Current_State.Current_Node := Beta;
-               end if;
+            --  YAML parsing: match key at start of line, extract trimmed value
+            if L'Length = 0 or else L (L'First) = '#' then
+               null;  -- Skip empty lines and comments
+            elsif Index (L, "turn_number:") = L'First then
+               Current_State.Turn_Number := Natural'Value (Value_Str);
+            elsif Index (L, "chaos:") = L'First then
+               Current_State.Chaos := Natural'Value (Value_Str);
+            elsif Index (L, "exposure:") = L'First then
+               Current_State.Exposure := Natural'Value (Value_Str);
+            elsif Index (L, "faction_slider:") = L'First then
+               Current_State.Faction_Slider := Integer'Value (Value_Str);
+            elsif Index (L, "current_node:") = L'First then
+               --  Strip surrounding quotes from value if present
+               declare
+                  Node_Val : constant String :=
+                    Trim (Value_Str, Both);
+                  Unquoted : constant String :=
+                    (if Node_Val'Length >= 2
+                        and then Node_Val (Node_Val'First) = '"'
+                        and then Node_Val (Node_Val'Last) = '"'
+                     then Node_Val (Node_Val'First + 1 .. Node_Val'Last - 1)
+                     else Node_Val);
+               begin
+                  if Index (Unquoted, "alpha") > 0 then
+                     Current_State.Current_Node := Alpha;
+                  else
+                     Current_State.Current_Node := Beta;
+                  end if;
+               end;
             end if;
          end;
       end loop;
