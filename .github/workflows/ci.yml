@@ -42,7 +42,6 @@ jobs:
         with:
           scandir: "./scripts"
           severity: warning
-        continue-on-error: true
 
       - name: Check YAML
         uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c # v3.1.1
