@@ -2,38 +2,42 @@
 git clone https://github.com/hyperpolymath/thejeffparadox.git
 cd thejeffparadox
 
-# Using Nix (recommended for reproducibility)
-nix develop
+# Install Julia dependencies
+cd engine && julia --project=. -e 'using Pkg; Pkg.instantiate()'
+cd ..
 
 # Or using toolbox/distrobox
 toolbox create thejeffparadox-dev
 toolbox enter thejeffparadox-dev
-# Install dependencies manually
+# Install: Julia 1.10+, Hugo extended 0.120+, optionally GNAT/Alire
 
 # Verify setup
-just check   # or: cargo check / mix compile / etc.
-just test    # Run test suite
+just test    # Run all 6 test targets
 ```
 
 ### Repository Structure
 ```
 thejeffparadox/
-├── src/                 # Source code (Perimeter 1-2)
-├── lib/                 # Library code (Perimeter 1-2)
-├── extensions/          # Extensions (Perimeter 2)
-├── plugins/             # Plugins (Perimeter 2)
-├── tools/               # Tooling (Perimeter 2)
-├── docs/                # Documentation (Perimeter 3)
-│   ├── architecture/    # ADRs, specs (Perimeter 2)
-│   └── proposals/       # RFCs (Perimeter 3)
-├── examples/            # Examples (Perimeter 3)
-├── spec/                # Spec tests (Perimeter 3)
-├── tests/               # Test suite (Perimeter 2-3)
-├── .well-known/         # Protocol files (Perimeter 1-3)
-├── .github/             # GitHub config (Perimeter 1)
+├── engine/              # Julia - Game mechanics, LLM APIs, metrics
+│   ├── src/             # Source modules
+│   └── test/            # Julia test suite
+├── node-alpha/          # Hugo - Homeward faction fragment
+├── node-beta/           # Hugo - Earthbound faction fragment
+├── orchestrator/        # Hugo - Game Master, public rendering
+├── tui/                 # Ada - Terminal UI for experiment control
+├── container/           # Podman/Wolfi - Containerised deployment
+├── ffi/                 # Zig - C-compatible FFI bindings
+├── contractiles/        # Contract templates (must/trust/dust/lust)
+├── papers/              # Research - Whitepaper, references
+├── scripts/             # Shell - Orchestration scripts
+├── tests/               # Structural validation scripts
+├── docs/                # Documentation
+│   └── wiki/            # Architecture, FAQ, philosophy guides
+├── examples/            # Example code (ReScript, etc.)
+├── .github/             # GitHub config
 │   ├── ISSUE_TEMPLATE/
-│   └── workflows/
-├── CHANGELOG.md
+│   └── workflows/       # 20+ CI/CD workflows
+├── CHANGELOG.adoc
 ├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md      # This file
 ├── GOVERNANCE.md
@@ -41,8 +45,7 @@ thejeffparadox/
 ├── MAINTAINERS.md
 ├── README.adoc
 ├── SECURITY.md
-├── flake.nix            # Nix flake (Perimeter 1)
-└── justfile             # Task runner (Perimeter 1)
+└── Justfile             # Task runner (6 Grade B test targets)
 ```
 
 ---

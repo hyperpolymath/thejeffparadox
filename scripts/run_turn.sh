@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2025 The Jeff Paradox Collaboration
+# SPDX-License-Identifier: MIT
+
 # run_turn.sh - Execute a single turn of The Jeff Paradox
 # Requires: Julia 1.10+, Hugo 0.120+, environment variables for API keys
 

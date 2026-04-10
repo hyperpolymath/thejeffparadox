@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 The Jeff Paradox Collaboration
+# SPDX-License-Identifier: MIT
+
 """
 LLM API abstraction layer.
 
@@ -36,6 +39,13 @@ const PROVIDERS = Dict(
         chat_endpoint = "/chat/completions",
         model_prefix = ""
     )
+)
+
+# Default model names per provider — override via GM_MODEL env var
+const DEFAULT_MODELS = Dict(
+    "anthropic" => "claude-sonnet-4-20250514",
+    "mistral" => "mistral-large-latest",
+    "local" => "qwen/qwen3-8b"
 )
 
 # ============================================================================
@@ -402,15 +412,17 @@ end
 # ============================================================================
 
 """
-    generate_response(node, context, diversity_prompt, role) -> String
+    generate_response(node, context, diversity_prompt, role; game=nothing) -> String
 
 Generate a response for either a node or the GM.
+When `game` is provided, aperture control adjusts temperature dynamically.
 """
 function generate_response(
     node,  # NodeState or nothing for GM
     context::String,
     diversity_prompt::String,
-    role::Symbol
+    role::Symbol;
+    game=nothing
 )::String
 
     if role == :node && node !== nothing
@@ -421,21 +433,18 @@ function generate_response(
         # GM defaults - prefer cloud providers over local
         if haskey(ENV, "ANTHROPIC_API_KEY") && !isempty(get(ENV, "ANTHROPIC_API_KEY", ""))
             provider = "anthropic"
-            model = get(ENV, "GM_MODEL", "claude-sonnet-4-20250514")
         elseif haskey(ENV, "MISTRAL_API_KEY") && !isempty(get(ENV, "MISTRAL_API_KEY", ""))
             provider = "mistral"
-            model = get(ENV, "GM_MODEL", "mistral-large-latest")
         else
             provider = get(ENV, "GM_PROVIDER", "local")
-            model = get(ENV, "GM_MODEL", "qwen/qwen3-8b")
         end
+        model = get(ENV, "GM_MODEL", DEFAULT_MODELS[provider])
         temperature = 0.7
     end
 
-    # Compute adjusted temperature (aperture control)
-    if node !== nothing && hasfield(typeof(node), :temperature)
-        # Would need access to game state here for full aperture control
-        temperature = node.temperature
+    # Apply aperture control when game state is available
+    if game !== nothing
+        temperature = compute_aperture(game, temperature)
     end
 
     full_context = context
