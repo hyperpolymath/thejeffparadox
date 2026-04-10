@@ -1,4 +1,7 @@
 #!/usr/bin/env julia
+# SPDX-FileCopyrightText: 2025 The Jeff Paradox Collaboration
+# SPDX-License-Identifier: MIT
+
 #
 # generate_report.jl - Generate daily metrics report
 #

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2025 The Jeff Paradox Collaboration
+# SPDX-License-Identifier: MIT
+
 # infinite_loop.sh - Run The Jeff Paradox continuously
 # This is the main daemon that keeps the conversation going
 

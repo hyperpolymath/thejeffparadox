@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 The Jeff Paradox Collaboration
+# SPDX-License-Identifier: MIT
+
 """
 Conceptor-inspired anti-convergence mechanisms.
 

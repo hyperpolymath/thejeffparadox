@@ -291,6 +291,170 @@ function compute_metrics(game)::Dict{String,Any}
     )
 end
 
+# ============================================================================
+# Trend Analysis
+# ============================================================================
+
+"""
+    metrics_trend(game, metric_name::String, window::Int=20) -> Symbol
+
+Analyse the trend of a metric over recent turns.
+Returns :increasing, :decreasing, or :stable.
+
+Uses simple linear regression slope over the window.
+"""
+function metrics_trend(game, metric_name::String, window::Int=20)::Symbol
+    history = game.metrics_history
+    if length(history) < 3
+        return :stable
+    end
+
+    recent = history[max(1, end-window+1):end]
+    values = Float64[]
+
+    for m in recent
+        val = get(m, metric_name, nothing)
+        if val !== nothing
+            push!(values, Float64(val))
+        end
+    end
+
+    if length(values) < 3
+        return :stable
+    end
+
+    # Simple linear regression: slope of values over indices
+    n = length(values)
+    x = collect(1.0:n)
+    x_mean = mean(x)
+    y_mean = mean(values)
+
+    numerator = sum((x .- x_mean) .* (values .- y_mean))
+    denominator = sum((x .- x_mean) .^ 2)
+
+    if denominator == 0.0
+        return :stable
+    end
+
+    slope = numerator / denominator
+
+    # Normalise slope relative to value range for threshold comparison
+    value_range = maximum(values) - minimum(values)
+    normalised = value_range > 0 ? abs(slope) / value_range : abs(slope)
+
+    if normalised < 0.05
+        :stable
+    elseif slope > 0
+        :increasing
+    else
+        :decreasing
+    end
+end
+
+# ============================================================================
+# Emergent Pattern Detection
+# ============================================================================
+
+"""
+    detect_emergent_patterns(game) -> Vector{String}
+
+Detect emergent patterns in the conversation history.
+Looks for:
+- Recurring thematic n-grams that appear across both nodes
+- Self-referential loops (nodes referencing their own earlier statements)
+- Novel vocabulary that persists (introduced and then reused)
+"""
+function detect_emergent_patterns(game)::Vector{String}
+    patterns = String[]
+    turns = game.turn_history
+
+    if length(turns) < 20
+        return patterns
+    end
+
+    # 1. Cross-node recurring phrases (3-grams appearing in both nodes)
+    alpha_turns = filter(t -> get(t, "node", "") == "alpha", turns)
+    beta_turns = filter(t -> get(t, "node", "") == "beta", turns)
+
+    if !isempty(alpha_turns) && !isempty(beta_turns)
+        alpha_ngrams = _extract_ngrams(alpha_turns, 3)
+        beta_ngrams = _extract_ngrams(beta_turns, 3)
+
+        shared = intersect(keys(alpha_ngrams), keys(beta_ngrams))
+        # Filter to phrases used 3+ times by each node
+        significant = filter(ng -> alpha_ngrams[ng] >= 3 && beta_ngrams[ng] >= 3, shared)
+
+        if !isempty(significant)
+            top = sort(collect(significant), by=ng -> alpha_ngrams[ng] + beta_ngrams[ng], rev=true)
+            for ng in top[1:min(3, length(top))]
+                total = alpha_ngrams[ng] + beta_ngrams[ng]
+                push!(patterns, "Shared phrase \"$(ng)\" used $(total) times across both nodes")
+            end
+        end
+    end
+
+    # 2. Vocabulary persistence: words introduced in later turns that persist
+    if length(turns) >= 40
+        early = turns[1:div(length(turns), 2)]
+        late = turns[div(length(turns), 2)+1:end]
+
+        early_words = Set(split(lowercase(join([get(t, "action", "") for t in early], " "))))
+        late_words = split(lowercase(join([get(t, "action", "") for t in late], " ")))
+
+        # Words that appear frequently in late half but never in early half
+        late_counts = Dict{String,Int}()
+        for w in late_words
+            if length(w) > 4 && !(w in early_words)  # Skip short/common words
+                late_counts[w] = get(late_counts, w, 0) + 1
+            end
+        end
+
+        novel_persistent = filter(p -> p.second >= 5, late_counts)
+        if !isempty(novel_persistent)
+            top_novel = sort(collect(novel_persistent), by=p -> p.second, rev=true)
+            for (word, count) in top_novel[1:min(3, length(top_novel))]
+                push!(patterns, "Novel term \"$(word)\" emerged and persisted ($(count) uses)")
+            end
+        end
+    end
+
+    # 3. Metric-based patterns
+    if length(game.metrics_history) >= 10
+        coherence_trend = metrics_trend(game, "coherence_score", 20)
+        if coherence_trend == :increasing
+            push!(patterns, "Coherence increasing — nodes may be synchronising")
+        end
+
+        diversity_trend = metrics_trend(game, "vocabulary_diversity", 20)
+        if diversity_trend == :decreasing
+            push!(patterns, "Vocabulary diversity declining — language converging")
+        end
+    end
+
+    patterns
+end
+
+"""
+    _extract_ngrams(turns::Vector, n::Int) -> Dict{String,Int}
+
+Extract n-gram counts from turn actions.
+"""
+function _extract_ngrams(turns::Vector, n::Int)::Dict{String,Int}
+    counts = Dict{String,Int}()
+    for turn in turns
+        words = split(lowercase(get(turn, "action", "")))
+        for i in 1:(length(words) - n + 1)
+            ngram = join(words[i:i+n-1], " ")
+            counts[ngram] = get(counts, ngram, 0) + 1
+        end
+    end
+    counts
+end
+
+# ============================================================================
+# Summary
+# ============================================================================
+
 """
     metrics_summary(game) -> String
 

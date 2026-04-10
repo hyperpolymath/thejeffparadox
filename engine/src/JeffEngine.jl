@@ -41,9 +41,11 @@ export check_thresholds
 # Anti-convergence (from conceptors.jl)
 export should_inject_diversity, get_diversity_prompt, should_seed_contradiction
 export get_contradiction_seed, get_quarantine_instruction
+export convergence_warning, detect_convergence
 
 # Metrics (from metrics.jl)
 export compute_metrics, MetricsSnapshot, metrics_summary
+export metrics_trend, detect_emergent_patterns
 
 # LLM (from llm_client.jl)
 export generate_response, build_context, build_gm_context
