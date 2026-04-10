@@ -422,12 +422,12 @@ function detect_emergent_patterns(game)::Vector{String}
     if length(game.metrics_history) >= 10
         coherence_trend = metrics_trend(game, "coherence_score", 20)
         if coherence_trend == :increasing
-            push!(patterns, "Coherence increasing — nodes may be synchronising")
+            push!(patterns, "Coherence increasing \u2014 nodes may be synchronising")
         end
 
         diversity_trend = metrics_trend(game, "vocabulary_diversity", 20)
         if diversity_trend == :decreasing
-            push!(patterns, "Vocabulary diversity declining — language converging")
+            push!(patterns, "Vocabulary diversity declining \u2014 language converging")
         end
     end
 
