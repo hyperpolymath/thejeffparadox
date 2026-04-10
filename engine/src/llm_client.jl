@@ -460,3 +460,171 @@ function generate_response(
 
     call_llm(provider, model, messages, temperature, 1024)
 end
+
+# ============================================================================
+# Embedding Generation
+# ============================================================================
+
+const EMBEDDING_PROVIDERS = Dict(
+    "anthropic" => (
+        # Anthropic doesn't have direct embedding API - use Voyage or local
+        base_url = "https://api.voyageai.com/v1",
+        key_env = "VOYAGE_API_KEY",
+        endpoint = "/embeddings",
+        model = "voyage-2",
+        dimensions = 1024
+    ),
+    "mistral" => (
+        base_url = "https://api.mistral.ai/v1",
+        key_env = "MISTRAL_API_KEY",
+        endpoint = "/embeddings",
+        model = "mistral-embed",
+        dimensions = 1024
+    ),
+    "local" => (
+        base_url = "http://localhost:1234/v1",
+        key_env = "LOCAL_API_KEY",
+        endpoint = "/embeddings",
+        model = "nomic-embed-text",
+        dimensions = 768
+    )
+)
+
+"""
+    get_embedding(text::String, provider::String="local") -> Vector{Float64}
+
+Get embedding vector for text. Used for semantic similarity computations.
+"""
+function get_embedding(text::String, provider::String="local")::Vector{Float64}
+    if !haskey(EMBEDDING_PROVIDERS, provider)
+        @warn "Unknown embedding provider '$(provider)', returning zero vector"
+        return zeros(Float64, 1024)
+    end
+
+    config = EMBEDDING_PROVIDERS[provider]
+    api_key = get(ENV, config.key_env, "")
+
+    if isempty(api_key) && provider != "local"
+        @warn "Embedding API key not set ($(config.key_env)), returning zero vector" provider=provider
+        return zeros(Float64, config.dimensions)
+    end
+
+    url = config.base_url * config.endpoint
+
+    headers = [
+        "Content-Type" => "application/json",
+        "Authorization" => "Bearer $(api_key)"
+    ]
+
+    body = JSON3.write(Dict(
+        "model" => config.model,
+        "input" => [text]
+    ))
+
+    try
+        response = HTTP.post(url, headers, body; connect_timeout=30, readtimeout=60)
+
+        if response.status == 200
+            data = JSON3.read(String(response.body))
+            embedding = data["data"][1]["embedding"]
+            return Float64.(embedding)
+        else
+            err_msg = classify_http_error(response.status, provider, String(response.body))
+            @warn "Embedding API error" provider=provider status=response.status message=err_msg
+            return zeros(Float64, config.dimensions)
+        end
+    catch e
+        err_str = if e isa Base.IOError || e isa HTTP.ConnectError
+            "Connection failed — is embedding service reachable?"
+        elseif e isa HTTP.TimeoutError
+            "Embedding request timed out"
+        else
+            "$(typeof(e)): $(sprint(showerror, e))"
+        end
+        @warn "Embedding API call failed" provider=provider error=err_str
+        return zeros(Float64, config.dimensions)
+    end
+end
+
+"""
+    cosine_similarity(a::Vector{Float64}, b::Vector{Float64}) -> Float64
+
+Compute cosine similarity between two vectors.
+"""
+function cosine_similarity(a::Vector{Float64}, b::Vector{Float64})::Float64
+    if length(a) != length(b) || isempty(a)
+        return 0.0
+    end
+
+    dot_product = sum(a .* b)
+    norm_a = sqrt(sum(a .^ 2))
+    norm_b = sqrt(sum(b .^ 2))
+
+    (norm_a > 0 && norm_b > 0) ? dot_product / (norm_a * norm_b) : 0.0
+end
+
+"""
+    semantic_distance(a::Vector{Float64}, b::Vector{Float64}) -> Float64
+
+Compute semantic distance (1 - cosine_similarity).
+"""
+function semantic_distance(a::Vector{Float64}, b::Vector{Float64})::Float64
+    1.0 - cosine_similarity(a, b)
+end
+
+# ============================================================================
+# Rate Limiting
+# ============================================================================
+
+const RATE_LIMITS = Dict(
+    "anthropic" => (requests_per_minute = 50, tokens_per_minute = 40000),
+    "mistral" => (requests_per_minute = 60, tokens_per_minute = 100000),
+    "local" => (requests_per_minute = 1000, tokens_per_minute = 1000000)
+)
+
+mutable struct RateLimiter
+    provider::String
+    request_times::Vector{DateTime}
+    token_counts::Vector{Int}
+end
+
+"""
+    check_rate_limit(limiter::RateLimiter, estimated_tokens::Int) -> Bool
+
+Check if request would exceed rate limits. Returns true if OK to proceed.
+Cleans stale entries and checks both request count and token budget.
+"""
+function check_rate_limit(limiter::RateLimiter, estimated_tokens::Int)::Bool
+    now_time = now()
+    minute_ago = now_time - Minute(1)
+
+    # Clean stale entries from both vectors in lockstep
+    valid = [t > minute_ago for t in limiter.request_times]
+    limiter.request_times = limiter.request_times[valid]
+    limiter.token_counts = limiter.token_counts[valid]
+
+    limits = RATE_LIMITS[limiter.provider]
+
+    if length(limiter.request_times) >= limits.requests_per_minute
+        @info "Rate limit reached (requests)" provider=limiter.provider current=length(limiter.request_times) limit=limits.requests_per_minute
+        return false
+    end
+
+    recent_tokens = sum(limiter.token_counts; init=0)
+    if recent_tokens + estimated_tokens > limits.tokens_per_minute
+        @info "Rate limit reached (tokens)" provider=limiter.provider current_tokens=recent_tokens estimated=estimated_tokens limit=limits.tokens_per_minute
+        return false
+    end
+
+    true
+end
+
+"""
+    record_request(limiter::RateLimiter, tokens::Int)
+
+Record a completed request for rate limiting.
+"""
+function record_request(limiter::RateLimiter, tokens::Int)
+    push!(limiter.request_times, now())
+    push!(limiter.token_counts, tokens)
+end
