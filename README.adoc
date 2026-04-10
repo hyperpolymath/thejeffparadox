@@ -1,5 +1,5 @@
 = The Jeff Paradox
-image:https://img.shields.io/badge/License-MPL_2.0-blue.svg[MPL-2.0-or-later,link="https://opensource.org/licenses/MPL-2.0"]
+image:https://img.shields.io/badge/License-PMPL--1.0-indigo.svg[PMPL-1.0-or-later,link="LICENSE"]
 
 == License & Philosophy
 
@@ -179,12 +179,16 @@ WCAG 2.2 AAA compliance target:
 
 == License
 
-MIT
+PMPL-1.0-or-later (Palimpsest-MPL)
+
+The PMPL extends MPL-2.0 with ethical use requirements and emotional lineage
+preservation. For platform compatibility, files declare `MPL-2.0-or-later` in
+SPDX headers. See `license/PMPL-1.0.txt` for the full text.
 
 == Acknowledgements
 
-*Based on [The Jeff Paradox](https://criticalkit.us/products/the-jeff-paradox)*
-by *Tim Roberts* / [Critical Kit LLC](https://criticalkit.us).
+*Based on https://criticalkit.us/products/the-jeff-paradox[The Jeff Paradox]*
+by *Tim Roberts* / https://criticalkit.us[Critical Kit LLC].
 
 - Tim Roberts / Critical Kit (*The Jeff Paradox* TTRPG)
 - Nick Chater (*The Mind Is Flat*)

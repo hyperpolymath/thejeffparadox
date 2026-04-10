@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2025 The Jeff Paradox Collaboration
+# SPDX-License-Identifier: MIT
+
 # metrics_report.sh - Generate a metrics report for The Jeff Paradox
 
 set -euo pipefail

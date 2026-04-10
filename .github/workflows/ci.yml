@@ -42,7 +42,6 @@ jobs:
         with:
           scandir: "./scripts"
           severity: warning
-        continue-on-error: true
 
       - name: Check YAML
         uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c # v3.1.1
@@ -92,6 +91,25 @@ jobs:
         run: |
           cd engine
           julia scripts/run_tests.jl
+        continue-on-error: true
+
+  # ==========================================================================
+  # Ada TUI Build
+  # ==========================================================================
+  ada-tui:
+    name: Ada TUI Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Setup Alire
+        uses: alire-project/setup-alire@b1456c6fce8e775b2e1260be8a929d15d1e7f3c5 # v3.0.2
+
+      - name: Build Ada TUI
+        run: cd tui && alr build
         continue-on-error: true
 
   # ==========================================================================
