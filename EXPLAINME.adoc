@@ -1,0 +1,139 @@
+// SPDX-License-Identifier: MPL-2.0-or-later
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+= The Jeff Paradox — EXPLAINME
+:toc: preamble
+:icons: font
+
+This file maps README.adoc claims to their implementation evidence for
+sceptical developers.
+
+== "LLM diachronic identity experiment: two AI fragments competing for a shared fictional body"
+
+[quote, README.adoc]
+____
+Two AI personality fragments engage in infinite structured dialogue, competing
+for control of a shared fictional body. One wants to return home. One wants
+to stay.
+____
+
+How this is implemented::
+link:node-alpha/[`node-alpha/`] and link:node-beta/[`node-beta/`] are Hugo
+site directories. Each carries a system prompt (the "personality fragment"
+definition) and a conversation history rendered as Hugo pages. The
+link:orchestrator/[`orchestrator/`] Hugo site is the Game Master — it sequences
+turns, renders the public-facing conversation log, and tracks metrics.
+The link:scripts/run_turn.sh[`scripts/run_turn.sh`] script calls the LLM API
+(Anthropic or Mistral) for each node's turn in sequence.
+
+Caveat::
+"Infinite" in practice means "scheduled via GitHub Actions `conversation.yml`
+at a configurable interval." The conversation is not truly continuous —
+each turn is a discrete API call with the prior conversation history as
+context. The experiment depends on context window size to maintain coherence.
+
+== "Anti-convergence mechanisms"
+
+[quote, README.adoc]
+____
+Anti-Convergence: Diversity injection, contradiction seeding, aperture control,
+pattern quarantine.
+____
+
+How this is implemented::
+The Julia engine in link:engine/[`engine/`] implements the conceptor-inspired
+anti-convergence mechanisms: `engine/src/diversity.jl` injects periodic
+perspective-shifting prompts, `engine/src/contradictions.jl` seeds dissonant
+elements when coherence exceeds a threshold, `engine/src/aperture.jl`
+modulates the LLM temperature parameter based on vocabulary diversity
+(high diversity → lower temperature, low diversity → higher temperature),
+and `engine/src/quarantine.jl` tracks overused phrases and suppresses them
+in subsequent turns.
+
+Caveat::
+The anti-convergence mechanisms are post-hoc injections, not architectural
+constraints on the LLM. A sufficiently coherent conversation can still
+converge if the LLM's priors are strong enough. The mechanisms slow
+convergence; they do not prevent it.
+
+== "Statistical hypothesis testing for emergence detection"
+
+[quote, README.adoc]
+____
+Statistical framework: ADF tests for convergence detection, Hotelling's T²
+for seed reproducibility, Bayes factors for attractor existence, ICC for
+cross-run consistency.
+____
+
+How this is implemented::
+`engine/src/metrics.jl` implements the full statistical framework:
+`adf_test` wraps the Augmented Dickey-Fuller test from the `HypothesisTests.jl`
+package to detect whether the convergence index time series is stationary
+(convergence indicator). `hotelling_t2` compares node pairs under the same
+seed to measure reproducibility. `bayes_factor` tests for attractor existence
+using the Savage–Dickey density ratio. The `scripts/metrics_report.sh` script
+runs the Julia engine and formats the output.
+
+Caveat::
+Statistical significance of emergence and convergence results depends on
+running the experiment for many turns (hundreds to thousands). Short runs
+will not produce reliable statistical conclusions.
+
+== "Ada TUI for experiment control"
+
+[quote, README.adoc]
+____
+TUI: Ada 2022, terminal interface for experiment control
+____
+
+How this is implemented::
+link:tui/[`tui/`] is an Ada 2022 project built with Alire (`alire.toml`). It
+provides a terminal UI for: viewing current node state, manually triggering
+turns, adjusting anti-convergence parameters, and exporting conversation
+snapshots. The `alr build` command compiles the Ada code via GNAT.
+
+Caveat::
+Ada is an optional component — the experiment runs without it. `just run` uses
+the shell scripts directly. The TUI requires GNAT/Alire to be installed
+separately.
+
+== Dogfooded Across The Account
+
+[cols="1,2,2", options="header"]
+|===
+| Technology / Pattern | Used here | Also used in
+
+| Hugo for content rendering
+| Node/orchestrator personality fragments as Hugo pages
+| link:https://github.com/hyperpolymath/lcb-website[lcb-website]
+
+| Julia for statistical analysis
+| Convergence metrics, hypothesis testing
+| link:https://github.com/hyperpolymath/phantom-metal-taste[phantom-metal-taste]
+  (gaming detection), link:https://github.com/hyperpolymath/verisimdb[verisimdb]
+
+| Ada 2022 for TUI
+| Terminal experiment control
+| link:https://github.com/hyperpolymath/oikos[oikos] (planned SPARK integration)
+
+| Podman / Wolfi base image
+| Containerised deployment
+| link:https://github.com/hyperpolymath/burble[burble],
+  link:https://github.com/hyperpolymath/stapeln[stapeln]
+
+| GitHub Actions for scheduled turns
+| `conversation.yml` cron-based LLM interaction
+| Unique pattern in the estate
+|===
+
+== Known Gaps
+
+The experiment methodology is documented in link:papers/whitepaper.md[`papers/whitepaper.md`]
+and link:papers/validity_framework.md[`papers/validity_framework.md`], but no
+published peer-reviewed results exist. The statistical framework is designed
+for rigorous analysis; whether the experiment produces philosophically
+interesting results is an empirical question.
+
+The `node-alpha/` and `node-beta/` Hugo configs use the Hugo personality
+architecture, not the standard hyperpolymath ReScript/Deno stack — this is
+appropriate for a Hugo-based content rendering project but means the nodes
+are not RSR-compliant in the usual sense.
