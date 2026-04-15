@@ -1,3 +1,5 @@
+import? "contractile.just"
+
 # The Jeff Paradox - Task Runner
 set shell := ["bash", "-uc"]
 set dotenv-load := true
