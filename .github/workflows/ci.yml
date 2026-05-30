@@ -106,7 +106,7 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Setup Alire
-        uses: alire-project/setup-alire@b1456c6fce8e775b2e1260be8a929d15d1e7f3c5 # v3.0.2
+        uses: alire-project/setup-alire@dee17535afebb29c4557f91f16a96a42f1369189 # v3.0.2
 
       - name: Build Ada TUI
         run: cd tui && alr build

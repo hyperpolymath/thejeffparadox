@@ -45,7 +45,7 @@ jobs:
           fi
           # Note: Python is banned per RSR - use Julia/Rust/ReScript instead
       - name: SAST scan
-        uses: returntocorp/semgrep-action@713efdd345f3b9c89a9cf549853899f828e79666
+        uses: returntocorp/semgrep-action@713efdd345f3035192eaa63f56867b88e63e4e5d
         continue-on-error: true
 
   # INTEROPERABILITY - API and format compatibility
