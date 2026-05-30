@@ -57,7 +57,7 @@ jobs:
         continue-on-error: true
 
       - name: Check for secrets (SAST)
-        uses: trufflesecurity/trufflehog@8a8ef8526528d8a4ff3e2c90be08e25ef8efbd9b # v3.88.3
+        uses: trufflesecurity/trufflehog@37b77001d0174ebec2fcca2bd83ff83a6d45a3ab # v3.88.3
         with:
           extra_args: --only-verified
         continue-on-error: true
