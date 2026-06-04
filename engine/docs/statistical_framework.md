@@ -1,3 +1,7 @@
+<!--
+SPDX-License-Identifier: MPL-2.0
+Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+-->
 # Statistical Framework for The Jeff Paradox
 
 ## Mathematical Foundations for Testing LLM Personality Stability

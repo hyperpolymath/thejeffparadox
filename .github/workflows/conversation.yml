@@ -47,6 +47,7 @@ jobs:
   conversation-turn:
     name: Execute Turn
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     # Only run if API keys are configured
     if: ${{ vars.CONVERSATION_ENABLED == 'true' }}

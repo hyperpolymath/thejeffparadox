@@ -1,20 +1,17 @@
 // SPDX-License-Identifier: MPL-2.0
+// Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 // SPDX-FileCopyrightText: 2025-2026 Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 
 = The Jeff Paradox
 image:https://img.shields.io/badge/OpenSSF-Best_Practices-green?logo=opensourcesecurity[OpenSSF Best Practices,link="https://www.bestpractices.dev/en/projects/new?repo_url=https://github.com/hyperpolymath/thejeffparadox"]
-image:https://img.shields.io/badge/License-PMPL--1.0-indigo.svg[MPL-2.0,link="LICENSE"]
+image:https://img.shields.io/badge/License-MPL_2.0-blue.svg[License: MPL-2.0,link="https://opensource.org/licenses/MPL-2.0"]
 image:https://api.thegreenwebfoundation.org/greencheckimage/github.com[Green Web,link="https://www.thegreenwebfoundation.org/green-web-check/?url=github.com"]
 
 == License & Philosophy
 
-This project must declare **MPL-2.0-or-later** for platform/tooling compatibility.
+This project is licensed under the Mozilla Public License, v. 2.0. See the `LICENSE` file for details.
 
-Philosophy: **Palimpsest**. The Palimpsest-MPL (PMPL) text is provided in `license/PMPL-1.0.txt`, and the canonical source is the palimpsest-license repository.
-// SPDX-License-Identifier: MPL-2.0-or-later
-// SPDX-FileCopyrightText: 2025 Jonathan D.A. Jewell
-
-An experiment in LLM diachronic identity.
+SPDX-License-Identifier: MPL-2.0
 
 == What Is This?
 
@@ -184,11 +181,9 @@ WCAG 2.2 AAA compliance target:
 
 == License
 
-MPL-2.0 (Palimpsest-MPL)
+This project is licensed under the Mozilla Public License, v. 2.0. See the `LICENSE` file for details.
 
-The PMPL extends MPL-2.0 with ethical use requirements and emotional lineage
-preservation. For platform compatibility, files declare `MPL-2.0-or-later` in
-SPDX headers. See `license/PMPL-1.0.txt` for the full text.
+SPDX-License-Identifier: MPL-2.0
 
 == Acknowledgements
 

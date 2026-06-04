@@ -1,3 +1,7 @@
+<!--
+SPDX-License-Identifier: MPL-2.0
+Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
+-->
 # Philosophy
 
 The Jeff Paradox is not just a technical experiment—it's a philosophical investigation. This document explains the theoretical framework.

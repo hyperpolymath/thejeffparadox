@@ -31,6 +31,7 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:
@@ -68,6 +69,7 @@ jobs:
   julia-tests:
     name: Julia Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:
@@ -99,6 +101,7 @@ jobs:
   ada-tui:
     name: Ada TUI Build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:
@@ -118,6 +121,7 @@ jobs:
   hugo-build:
     name: Hugo Build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:
@@ -164,6 +168,7 @@ jobs:
   accessibility:
     name: Accessibility
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: hugo-build
     permissions:
       contents: read
@@ -226,6 +231,7 @@ jobs:
   security:
     name: Security Scan
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       security-events: write
     steps:
@@ -266,6 +272,7 @@ jobs:
   container:
     name: Container Build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
     steps:
@@ -291,6 +298,7 @@ jobs:
   links:
     name: Link Check
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: hugo-build
     permissions:
       contents: read
