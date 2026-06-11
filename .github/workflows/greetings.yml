@@ -3,16 +3,12 @@
 # RSR Compliant: SHA-pinned
 
 name: Greetings
-
 on:
   pull_request_target:
     types: [opened]
   issues:
     types: [opened]
-
-
 permissions: read-all
-
 jobs:
   greeting:
     name: Welcome
@@ -36,7 +32,6 @@ jobs:
             - Expected vs actual behaviour
 
             A maintainer will review your issue soon.
-
           pr-message: |
             Welcome to The Jeff Paradox! Thank you for your first pull request.
 

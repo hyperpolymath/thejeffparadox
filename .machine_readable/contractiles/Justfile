@@ -98,3 +98,6 @@ clean:
 t: turn
 b: build
 s: state
+
+secret-scan-trufflehog:
+    @command -v trufflehog >/dev/null && trufflehog filesystem . --only-verified || true

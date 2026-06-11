@@ -4,26 +4,20 @@
 # RSR Compliant: SHA-pinned actions, no npm (using Deno)
 
 name: CI
-
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 env:
   HUGO_VERSION: "0.121.0"
   JULIA_VERSION: "1.10"
   DENO_VERSION: "1.40.0"
-
-
 permissions: read-all
-
 jobs:
   # ==========================================================================
   # Lint and Format
@@ -37,32 +31,27 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
       - name: Check shell scripts (shellcheck)
         uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # v2.0.0
         with:
           scandir: "./scripts"
           severity: warning
-
       - name: Check YAML
         uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c # v3.1.1
         with:
           file_or_dir: "."
           config_file: ".yamllint.yml"
         continue-on-error: true
-
       - name: Check Markdown
         uses: DavidAnson/markdownlint-cli2-action@30a0e04f1870d58f8d717450cc6134995f993c63 # v21.0.0
         with:
           globs: "**/*.md"
         continue-on-error: true
-
       - name: Check for secrets (SAST)
         uses: trufflesecurity/trufflehog@37b77001d0174ebec2fcca2bd83ff83a6d45a3ab # v3.88.3
         with:
           extra_args: --only-verified
         continue-on-error: true
-
   # ==========================================================================
   # Julia Tests
   # ==========================================================================
@@ -75,26 +64,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
       - name: Setup Julia
         uses: julia-actions/setup-julia@9b79636afcfb07ab02c256cede01fe2db6ba808c # v2.6.0
         with:
           version: ${{ env.JULIA_VERSION }}
-
       - name: Cache Julia packages
         uses: julia-actions/cache@d10a6fd8f31b12404a54613ebad242900567f2b9 # v2.1.0
-
       - name: Install dependencies
         run: |
           cd engine
           julia --project=. -e 'using Pkg; Pkg.instantiate()'
-
       - name: Run tests
         run: |
           cd engine
           julia scripts/run_tests.jl
         continue-on-error: true
-
   # ==========================================================================
   # Ada TUI Build
   # ==========================================================================
@@ -107,14 +91,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
       - name: Setup Alire
         uses: alire-project/setup-alire@dee17535afebb29c4557f91f16a96a42f1369189 # v3.0.2
-
       - name: Build Ada TUI
         run: cd tui && alr build
         continue-on-error: true
-
   # ==========================================================================
   # Hugo Build
   # ==========================================================================
@@ -130,28 +111,23 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
-
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@16361eb4acea8698b220b76c0d4e84e1fd22c61d # v2.6.0
         with:
           hugo-version: ${{ env.HUGO_VERSION }}
           extended: true
-
       - name: Build orchestrator
         run: |
           cd orchestrator
           hugo --minify --gc
-
       - name: Build node-alpha
         run: |
           cd node-alpha
           hugo --minify --gc
-
       - name: Build node-beta
         run: |
           cd node-beta
           hugo --minify --gc
-
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -161,7 +137,6 @@ jobs:
             node-alpha/public
             node-beta/public
           retention-days: 7
-
   # ==========================================================================
   # Accessibility Check (using Deno, not npm)
   # ==========================================================================
@@ -175,17 +150,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
       - name: Download artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: hugo-sites
-
       - name: Setup Deno
         uses: denoland/setup-deno@5e01c016a857a4dbb5afe9d0f9733cd472cba985 # v1.5.1
         with:
           deno-version: ${{ env.DENO_VERSION }}
-
       - name: Run accessibility check with Deno
         run: |
           # Use Deno to serve and check accessibility
@@ -224,7 +196,6 @@ jobs:
           }
           EOF
         continue-on-error: true
-
   # ==========================================================================
   # Security Scan (SAST)
   # ==========================================================================
@@ -237,7 +208,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
         with:
@@ -247,14 +217,12 @@ jobs:
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
         continue-on-error: true
-
       - name: Upload Trivy scan results
         uses: github/codeql-action/upload-sarif@662472033e021d55d94146f66f6058822b0b39fd # v3.28.1
         with:
           sarif_file: "trivy-results.sarif"
         if: always()
         continue-on-error: true
-
       - name: Verify SHA pinning in workflows
         run: |
           echo "Checking all workflows use SHA-pinned actions..."
@@ -265,7 +233,6 @@ jobs:
             exit 1
           fi
           echo "All actions are properly SHA-pinned"
-
   # ==========================================================================
   # Container Build Test
   # ==========================================================================
@@ -278,12 +245,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
       - name: Build container with Podman
         run: |
           podman build -t jeff-paradox:test -f container/Containerfile .
         continue-on-error: true
-
       - name: Scan container image
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
         with:
@@ -291,7 +256,6 @@ jobs:
           format: "table"
           severity: "CRITICAL,HIGH"
         continue-on-error: true
-
   # ==========================================================================
   # Link Check
   # ==========================================================================
@@ -305,12 +269,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
       - name: Download artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: hugo-sites
-
       - name: Check links
         uses: lycheeverse/lychee-action@a8c4c7cb88f0c7386610c35eb25108e448569cb0 # v2.7.0
         with:

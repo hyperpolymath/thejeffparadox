@@ -4,7 +4,6 @@
 # This workflow focuses on configuration security scanning only
 
 name: CodeQL
-
 on:
   push:
     branches: [main]
@@ -13,8 +12,6 @@ on:
   schedule:
     # Weekly on Sundays
     - cron: "0 0 * * 0"
-
-
 # Estate guardrail: cancel superseded runs so re-pushes / rebased PR
 # updates do not pile up queued runs against the shared account-wide
 # Actions concurrency pool. Applied only to read-only check workflows
@@ -22,10 +19,7 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
-
 permissions: read-all
-
 jobs:
   # ==========================================================================
   # Note on Language Support
@@ -39,7 +33,6 @@ jobs:
   # - TruffleHog for secrets detection
   # - Language-specific linters in CI
   # ==========================================================================
-
   security-scan:
     name: Security Configuration Scan
     runs-on: ubuntu-latest
@@ -48,14 +41,11 @@ jobs:
       actions: read
       contents: read
       security-events: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
       # Since we don't have CodeQL-supported languages (no JS, Python, Go, etc.)
       # we skip CodeQL analysis and rely on other security tools configured in CI
-
       - name: Security scan summary
         run: |
           echo "## Security Scanning Status" >> $GITHUB_STEP_SUMMARY

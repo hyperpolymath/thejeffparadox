@@ -4,15 +4,11 @@
 # RSR Compliant: SHA-pinned
 
 name: Stale
-
 on:
   schedule:
     - cron: "0 1 * * *"
   workflow_dispatch:
-
-
 permissions: read-all
-
 jobs:
   stale:
     name: Mark Stale
@@ -26,7 +22,6 @@ jobs:
         uses: actions/stale@28ca1036281a5e5922ead5184a1bbf96e5fc984e # v9.0.0
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-
           stale-issue-message: |
             This issue has been automatically marked as stale because it has not had
             recent activity. It will be closed in 14 days if no further activity occurs.
@@ -36,18 +31,15 @@ jobs:
             - Remove the `stale` label
 
             Thank you for your contributions to The Jeff Paradox!
-
           close-issue-message: |
             This issue has been automatically closed due to inactivity.
 
             If you believe this issue should be reopened, please create a new issue
             with updated information or reference this one.
-
           stale-issue-label: "stale"
           exempt-issue-labels: "pinned,security,philosophy,in-progress"
           days-before-issue-stale: 60
           days-before-issue-close: 14
-
           stale-pr-message: |
             This pull request has been automatically marked as stale because it has not had
             recent activity. It will be closed in 7 days if no further activity occurs.
@@ -56,16 +48,13 @@ jobs:
             - Add a comment with an update
             - Push new commits
             - Remove the `stale` label
-
           close-pr-message: |
             This pull request has been automatically closed due to inactivity.
 
             If you'd like to continue this work, please open a new PR.
-
           stale-pr-label: "stale"
           exempt-pr-labels: "pinned,security,work-in-progress"
           days-before-pr-stale: 30
           days-before-pr-close: 7
-
           remove-stale-when-updated: true
           operations-per-run: 50
