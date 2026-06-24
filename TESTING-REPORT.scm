@@ -1,5 +1,5 @@
 ;; SPDX-FileCopyrightText: 2025 The Jeff Paradox Collaboration
-;; SPDX-License-Identifier: MPL-2.0-or-later
+;; SPDX-License-Identifier: MPL-2.0
 ;;
 ;; TESTING-REPORT.scm - Structured Testing Report for The Jeff Paradox
 ;; Format: Guile Scheme (application/testing-report+scm)

@@ -1,6 +1,6 @@
 #!/usr/bin/env julia
 # SPDX-FileCopyrightText: 2025 The Jeff Paradox Collaboration
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: MPL-2.0
 
 #
 # run_tests.jl - Run JeffEngine tests with proper module loading

@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MPL-2.0-or-later
+# SPDX-License-Identifier: MPL-2.0
 # Integration tests for the full turn execution pipeline.
 #
 # These tests exercise the complete flow from game state initialisation

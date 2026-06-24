@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-FileCopyrightText: 2025 The Jeff Paradox Collaboration
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: MPL-2.0
 
 # metrics_report.sh - Generate a metrics report for The Jeff Paradox
 
