@@ -1,41 +1,69 @@
-// SPDX-License-Identifier: CC-BY-SA-4.0
-// Copyright (c) Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
-= Changelog
+== Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to `+thejeffparadox+` will be documented in this
+file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+This file is generated from conventional commits by the
+https://github.com/hyperpolymath/standards/blob/main/.github/workflows/changelog-reusable.yml[`+changelog-reusable.yml+`]
+workflow (`+hyperpolymath/standards#206+`). Adopt the workflow in this
+repo’s CI to keep this file in sync automatically — see
+https://github.com/hyperpolymath/standards/blob/main/templates/cliff.toml[`+templates/cliff.toml+`]
+for the canonical config.
 
-== [Unreleased]
+The format follows https://keepachangelog.com/en/1.1.0/[Keep a
+Changelog]; this project aims to follow
+https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
-=== Added
+=== [Unreleased]
 
-- Initial Julia game engine with anti-convergence mechanisms
-- Hugo sites for orchestrator, node-alpha, node-beta
-- GitHub Actions CI/CD with SHA-pinned actions
-- Containerfile for Wolfi-based deployment
-- Comprehensive documentation (claude.adoc, whitepaper)
-- RSR compliance infrastructure
+==== Added
 
-=== Fixed
+* feat(engine): improve LLM client error handling and recovery
+* feat: implement metrics_trend/detect_emergent_patterns, add SPDX
+headers
+* feat: add CRG Grade B test suite (6 targets)
 
-- JeffEngine module exports and include order
-- GitHub Actions SHA pinning for all dependencies
-- Hugo theme configuration
+==== Fixed
 
-== [0.1.0] - 2025-11-29
+* fix(ci): sync hypatia-scan.yml to canonical (kill cd-scanner build
+drift) (#28)
+* fix(ci): build Hypatia escript from repo root (estate dogfood drift)
+* fix(ci): Phase-2 fleet submission must not fail the security gate
+(#25)
+* fix(ci): rsr-antipattern.yml duplicate heredoc (#24)
+* fix: remove boilerplate README, fix ABI template, harden CI (#2)
+* fix: remove boilerplate README, fix ABI template, harden CI
+* fix: create missing metrics.jl, fix README, rate limiter, and Ada
+parser (#1)
 
-=== Added
+==== Changed
 
-- Initial project structure
-- Core game mechanics (chaos, exposure, faction)
-- Anti-convergence system (conceptors)
-- LLM client abstraction (Anthropic, Mistral, local)
-- Metrics collection framework
-- Accessibility-first Hugo layouts
+* refactor: split llm_client, wire aperture control, expand tests
 
----
+==== Documentation
 
-Based on the original [The Jeff Paradox](https://criticalkit.us/products/the-jeff-paradox)
-TTRPG by Tim Roberts / Critical Kit LLC.
+* docs(readme): add SPDX header, OSSF and GWF badges
+* docs(explainme): add EXPLAINME.adoc
+* docs: remove conflicting placeholder README and fix license
+declarations
+
+==== CI
+
+* ci: bump actions/upload-artifact SHA to current v4 (#23)
+* ci(antipattern): fix top-level dir matching + benchmarks/lsp/bench
+filename allowlists (#17)
+* ci(antipattern): TS check reads .claude/CLAUDE.md exemption table
+(#16)
+* ci(antipattern): broaden TS allowlist (cli/, mod.ts, lsp-server,
+_vscode_, deno-*) (#15)
+* ci(antipattern): allowlist legit TS bridge/adapter paths (#14)
+
+=== Pre-history
+
+Prior commits to this file’s introduction are recorded in git history
+but not formally classified into Keep-a-Changelog sections. To backfill,
+run `+git cliff -o CHANGELOG.md+` locally using the canonical
+https://github.com/hyperpolymath/standards/blob/main/templates/cliff.toml[`+cliff.toml+`]
+— this is one-shot mechanical work.
+
+'''''
