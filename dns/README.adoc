@@ -1,0 +1,75 @@
+== DNS Security Configuration
+
+This directory contains DNS zone records for comprehensive email and
+domain security.
+
+=== Quick Start
+
+[arabic]
+. Copy `+zone-security.txt+` to your DNS provider
+. Replace `+YOURDOMAIN.COM+` with your actual domain
+. Update placeholder values (DKIM keys, verification codes, etc.)
+. Import via zone file import or add records individually
+
+=== Records Included
+
+[cols=",,",options="header",]
+|===
+|Record Type |Purpose |RFC
+|SPF |Authorize mail servers |RFC 7208
+|DKIM |Email signing |RFC 6376
+|DMARC |Email auth policy |RFC 7489
+|MTA-STS |Enforce TLS for mail |RFC 8461
+|TLS-RPT |TLS failure reports |RFC 8460
+|BIMI |Brand logo in email |BIMI Group
+|CAA |Certificate authority control |RFC 8659
+|DANE/TLSA |Certificate pinning |RFC 6698
+|===
+
+=== Implementation Order
+
+[arabic]
+. *Week 1*: Add SPF and start DKIM setup
+. *Week 2*: Deploy DMARC with `+p=none+` (monitor mode)
+. *Week 3*: Add CAA records
+. *Week 4*: Enable DNSSEC at registrar
+. *Week 5*: Add MTA-STS and TLS-RPT
+. *Week 6*: Review DMARC reports, tighten to `+p=quarantine+`
+. *Week 8*: Move to `+p=reject+` if reports are clean
+. *Optional*: Add DANE after DNSSEC is stable, add BIMI with VMC
+
+=== Required Web Resources
+
+These files must be hosted on your domain:
+
+==== `+/.well-known/mta-sts.txt+`
+
+....
+version: STSv1
+mode: enforce
+mx: mail.yourdomain.com
+max_age: 604800
+....
+
+==== `+/.well-known/security.txt+`
+
+Already in repository at `+.well-known/security.txt+`
+
+==== `+/.well-known/ai.txt+`
+
+Already in repository at `+.well-known/ai.txt+`
+
+=== Verification Tools
+
+* SPF: https://mxtoolbox.com/spf.aspx[MXToolbox SPF]
+* DKIM: https://mxtoolbox.com/dkim.aspx[MXToolbox DKIM]
+* DMARC: https://mxtoolbox.com/dmarc.aspx[MXToolbox DMARC]
+* CAA: https://sslmate.com/caa/[SSLMate CAA]
+* DNSSEC: https://dnsviz.net/[DNSViz]
+* Overall: https://www.hardenize.com/[Hardenize]
+
+=== RSR Compliance
+
+These records satisfy RSR requirements for: - Email authentication (SPF,
+DKIM, DMARC) - Transport security (MTA-STS, DANE) - Certificate control
+(CAA) - Security disclosure (security.txt DNS pointer)
