@@ -16,7 +16,7 @@ cd "$REPO_ROOT"
 [ -f README.adoc ]          && pass "README.adoc present"           || fail "README.adoc missing"
 [ -f LICENSE ]              && pass "LICENSE present"                || fail "LICENSE missing"
 [ -f SECURITY.md ]          && pass "SECURITY.md present"           || fail "SECURITY.md missing"
-[ -f ABI-FFI-README.md ]    && pass "ABI-FFI-README.md present"     || fail "ABI-FFI-README.md missing"
+[ -f ABI-FFI-README.adoc ]    && pass "ABI-FFI-README.adoc present"     || fail "ABI-FFI-README.adoc missing"
 
 # Required directories and key files
 [ -d engine ]                       && pass "engine/ directory present"               || fail "engine/ directory missing"
