@@ -13,17 +13,53 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
 # Required root files
-[ -f README.adoc ]          && pass "README.adoc present"           || fail "README.adoc missing"
-[ -f LICENSE ]              && pass "LICENSE present"                || fail "LICENSE missing"
-[ -f SECURITY.md ]          && pass "SECURITY.md present"           || fail "SECURITY.md missing"
-[ -f ABI-FFI-README.md ]    && pass "ABI-FFI-README.md present"     || fail "ABI-FFI-README.md missing"
+if [ -f README.adoc ]; then
+  pass "README.adoc present"
+else
+  fail "README.adoc missing"
+fi
+if [ -f LICENSE ]; then
+  pass "LICENSE present"
+else
+  fail "LICENSE missing"
+fi
+if [ -f SECURITY.md ]; then
+  pass "SECURITY.md present"
+else
+  fail "SECURITY.md missing"
+fi
+if [ -f ABI-FFI-README.adoc ]; then
+  pass "ABI-FFI-README.adoc present"
+else
+  fail "ABI-FFI-README.adoc missing"
+fi
 
 # Required directories and key files
-[ -d engine ]                       && pass "engine/ directory present"               || fail "engine/ directory missing"
-[ -f engine/test/runtests.jl ]      && pass "engine/test/runtests.jl present"        || fail "engine/test/runtests.jl missing"
-[ -d node-alpha ]                   && pass "node-alpha/ directory present"           || fail "node-alpha/ directory missing"
-[ -d node-beta ]                    && pass "node-beta/ directory present"            || fail "node-beta/ directory missing"
-[ -d orchestrator ]                 && pass "orchestrator/ directory present"         || fail "orchestrator/ directory missing"
+if [ -d engine ]; then
+  pass "engine/ directory present"
+else
+  fail "engine/ directory missing"
+fi
+if [ -f engine/test/runtests.jl ]; then
+  pass "engine/test/runtests.jl present"
+else
+  fail "engine/test/runtests.jl missing"
+fi
+if [ -d node-alpha ]; then
+  pass "node-alpha/ directory present"
+else
+  fail "node-alpha/ directory missing"
+fi
+if [ -d node-beta ]; then
+  pass "node-beta/ directory present"
+else
+  fail "node-beta/ directory missing"
+fi
+if [ -d orchestrator ]; then
+  pass "orchestrator/ directory present"
+else
+  fail "orchestrator/ directory missing"
+fi
 
 # GitHub workflows — require at least 3
 WORKFLOW_COUNT=0
